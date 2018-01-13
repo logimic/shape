@@ -27,6 +27,13 @@
       "libraryName": "",
       "enabled": true,
       "startlevel": -2
+    },
+    {
+      "name": "shape::ComponentTemplate",
+      "libraryPath": "",
+      "libraryName": "ComponentTemplate",
+      "enabled": true,
+      "startlevel": -2
     }
   ]
 }

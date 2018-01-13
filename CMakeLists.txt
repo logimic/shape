@@ -54,6 +54,7 @@ add_subdirectory(startup)
 add_subdirectory(launcher)
 add_subdirectory(TraceFormatService)
 add_subdirectory(TraceFileService)
+add_subdirectory(ComponentTemplate)
 
 # Configure config file.
 # This file specifies actions performed and variables exported when using find_package on this project.
