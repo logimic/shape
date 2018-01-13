@@ -1,0 +1,14 @@
+{
+  "component": "shape::TraceFileService",
+  "instance": "shape::TraceFileService-CommonTrace",
+
+  "path": "",
+  "filename": "CommonTrace.txt",
+
+  "VerbosityLevels": [
+    {
+      "channel": 0,
+      "level": "DBG"
+    }
+  ]
+}

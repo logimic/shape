@@ -1,0 +1,6 @@
+{
+	"component":	"shape::TraceFormatService",
+	"instance":	"shape::TraceFormatService-Standard",
+
+  "Format": "%DTI [%MID:%LVL] %CLK \"%MNM\" %MSG"
+}

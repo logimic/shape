@@ -1,0 +1,14 @@
+{
+  "component": "shape::TraceFileService",
+  "instance": "shape::TraceFileService-MyTrace",
+
+  "path": "",
+  "filename": "MyTrace.txt",
+
+  "VerbosityLevels": [
+    {
+      "channel": 1,
+      "level": "DBG"
+    }
+  ]
+}

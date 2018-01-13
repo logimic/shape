@@ -1,0 +1,17 @@
+#pragma once
+
+#include <ShapeComponent.h>
+
+extern "C" {
+  SHAPE_ABI_EXPORT void* get_component_@NAMESPACE_COMPONENT@(unsigned long* compiler, unsigned long* typehash)
+  {
+    *compiler = SHAPE_PREDEF_COMPILER;
+    *typehash = std::type_index(typeid(shape::ComponentMeta)).hash_code();
+
+    static shape::ComponentMetaTemplate<@COMPONENT@> component("@COMPONENT@");
+	
+@PROVIDED_INTERFACES@
+@REQUIRED_INTERFACES@
+    return &component;
+  }
+}
