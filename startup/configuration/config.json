@@ -29,9 +29,9 @@
       "startlevel": -2
     },
     {
-      "name": "shape::ComponentTemplate",
+      "name": "shape::Example1_Thread",
       "libraryPath": "",
-      "libraryName": "ComponentTemplate",
+      "libraryName": "Example1_Thread",
       "enabled": true,
       "startlevel": -2
     }

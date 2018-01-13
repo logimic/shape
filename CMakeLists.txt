@@ -56,6 +56,8 @@ add_subdirectory(TraceFormatService)
 add_subdirectory(TraceFileService)
 add_subdirectory(ComponentTemplate)
 
+add_subdirectory(examples/Example1_Thread)
+
 # Configure config file.
 # This file specifies actions performed and variables exported when using find_package on this project.
 # The find_package requires properly set ${PROJECT_NAME}_DIR variable to a location where the
