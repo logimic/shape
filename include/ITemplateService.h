@@ -9,7 +9,7 @@
 #define ITemplateService_DECLSPEC SHAPE_ABI_IMPORT
 #endif
 
-namespace shape {
+namespace shapeExpl {
   class ITemplateService_DECLSPEC ITemplateService
   {
   public:

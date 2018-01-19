@@ -1,8 +1,8 @@
 project(ComponentTemplate)
 
-set(COMPONENT shape::ComponentTemplate)
+set(COMPONENT shapeExpl::ComponentTemplate)
 DeclareShapeComponent(${COMPONENT})
-AddShapeProvidedInterface(${COMPONENT} shape::ITemplateService)
+AddShapeProvidedInterface(${COMPONENT} shapeExpl::ITemplateService)
 AddShapeRequiredInterface(${COMPONENT} shape::ITraceService MANDATORY MULTIPLE)
 ConfigureShapeComponent(${COMPONENT} COMPONENT_HXX)
 

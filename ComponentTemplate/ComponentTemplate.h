@@ -2,11 +2,10 @@
 
 #include "ITemplateService.h"
 #include "ShapeProperties.h"
+#include "ITraceService.h"
 #include <string>
 
-namespace shape {
-  class ITraceService;
-
+namespace shapeExpl {
   class ComponentTemplate : public ITemplateService
   {
   public:
@@ -14,12 +13,12 @@ namespace shape {
     virtual ~ComponentTemplate();
     std::string doService(const std::string & str) const override;
 
-    void activate(const Properties *props = 0);
+    void activate(const shape::Properties *props = 0);
     void deactivate();
-    void modify(const Properties *props);
+    void modify(const shape::Properties *props);
 
-    void attachInterface(ITraceService* iface);
-    void detachInterface(ITraceService* iface);
+    void attachInterface(shape::ITraceService* iface);
+    void detachInterface(shape::ITraceService* iface);
 
   private:
   };
