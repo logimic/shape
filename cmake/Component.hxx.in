@@ -1,3 +1,9 @@
+/*!!!!!!!!!!!
+ * This is generated header file according CMakeLists.txt of this project
+ * Don't edit it manually as this file is refreshed after rebuild.
+ * Fix CMakeLists.txt instead and assure required declarations are in place (included) above include of this file
+ *!!!!!!!!!!!
+*/
 #pragma once
 
 #include <ShapeComponent.h>
