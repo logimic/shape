@@ -26,7 +26,7 @@
 #include <iomanip>
 
 /// init static tracer
-#define TRC_INIT(moduleName) \
+#define TRC_INIT_MNAME(moduleName) \
 namespace shape { \
   shape::Tracer& shape::Tracer::get() { \
     static Tracer tracer(#moduleName); \
@@ -37,7 +37,7 @@ namespace shape { \
 }
 
 #ifndef SHAPE_STATIC_LIBS
-#define TRC_INIT_MODULE(moduleName) TRC_INIT(moduleName)
+#define TRC_INIT_MODULE(moduleName) TRC_INIT_MNAME(moduleName)
 #else
 #define TRC_INIT_MODULE(moduleName)
 #endif

@@ -19,7 +19,7 @@
 #include <Trace.h>
 #include <iostream>
 
-TRC_INIT("startup");
+TRC_INIT_MNAME("startup");
 
 int main(int argc, char** argv)
 {
