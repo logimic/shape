@@ -69,7 +69,7 @@ To start Shape framework provide main function:
 #include <Trace.h>
 #include <iostream>
 
-TRC_INIT_MNAME("IqrfGwDaemon-start");
+TRC_INIT_MNAME("app-start");
 
 int main(int argc, char** argv)
 {
@@ -156,7 +156,7 @@ Main function (above ) expects as 1.st cmdl parameter JSON file in this format:
 
 ```json
 {
-  "applicationName": "IqrfDaemon",
+  "applicationName": "AppName",
   "resourceDir": "",
   "dataDir": "",
   "cacheDir": "cache",
@@ -186,16 +186,16 @@ Main function (above ) expects as 1.st cmdl parameter JSON file in this format:
       "startlevel": -2
     },
     {
-      "name": "iqrfgw::DaemonController",
-      "libraryPath": "../DaemonController/Debug",
-      "libraryName": "DaemonController",
+      "name": "abc::CoolComponent",
+      "libraryPath": "../CoolComponent/Debug",
+      "libraryName": "CoolComponent",
       "enabled": true,
       "startlevel": 0
     },
     {
-      "name": "iqrfgw::Scheduler",
-      "libraryPath": "../Scheduler/Debug",
-      "libraryName": "Scheduler",
+      "name": "abc::HotComponent",
+      "libraryPath": "../HotComponent/Debug",
+      "libraryName": "HotComponent",
       "enabled": true,
       "startlevel": 0
     }
@@ -239,7 +239,7 @@ Then valid **Component Instance Configuration** can be declared in these files w
 {
   "component": "shape::TraceFileService",
   "instance": "shape::TraceFileService-Instance1",
-  ...
+  "...": "..."
 }
 ```
 *./configuration/Trace2.json*
@@ -247,7 +247,7 @@ Then valid **Component Instance Configuration** can be declared in these files w
 {
   "component": "shape::TraceFileService",
   "instance": "shape::TraceFileService-Instance2",
-  ...
+  "...": "..."
 }
 ```
 *./configuration/Trace3.json*
@@ -255,7 +255,7 @@ Then valid **Component Instance Configuration** can be declared in these files w
 {
   "component": "shape::TraceFileService",
   "instance": "shape::TraceFileService-Instance3",
-  ...
+  "...": "..."
 }
 ```
 
