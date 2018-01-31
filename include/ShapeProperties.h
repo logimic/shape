@@ -1,19 +1,3 @@
-/**
- * Copyright 2018 Logimic,s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 #pragma once
 
 #include <vector>
@@ -55,8 +39,18 @@ namespace shape {
     virtual Result getMemberAsProperties(const std::string& name, std::unique_ptr<Properties> & val) const = 0;
     virtual Result getMemberAsVectorProperties(const std::string& name, std::vector<std::unique_ptr<Properties>> & val) const = 0;
 
-    //TODO setters for all
+    virtual Result setMemberAsBool(const std::string& name, const bool & val) = 0;
+    virtual Result setMemberAsVectorBool(const std::string& name, const std::vector<bool> & val) = 0;
+    virtual Result setMemberAsInt(const std::string& name, const int & val) = 0;
+    virtual Result setMemberAsVectorInt(const std::string& name, const std::vector<int> & val) = 0;
+    virtual Result setMemberAsDouble(const std::string& name, const double & val) = 0;
+    virtual Result setMemberAsVectorDouble(const std::string& name, const std::vector<double> & val) = 0;
     virtual Result setMemberAsString(const std::string& name, const std::string & val) = 0;
+    virtual Result setMemberAsVectorString(const std::string& name, const std::vector<std::string> & val) = 0;
+
+    //TODO
+    //virtual Result setMemberAsProperties(const std::string& name, std::unique_ptr<Properties> & val) const = 0;
+    //virtual Result setMemberAsVectorProperties(const std::string& name, std::vector<std::unique_ptr<Properties>> & val) const = 0;
 
   };
 }

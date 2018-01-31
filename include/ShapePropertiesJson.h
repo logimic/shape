@@ -1,19 +1,3 @@
-/**
- * Copyright 2018 Logimic,s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 #pragma once
 
 #include "ShapeProperties.h"
@@ -88,7 +72,14 @@ namespace shape {
 
     void parseString(const std::string& str) override
     {
-      //TODO
+      std::istringstream is(str);
+      rapidjson::IStreamWrapper isw(is);
+      m_props.ParseStream(isw);
+
+      if (m_props.HasParseError()) {
+        THROW_EXC_TRC_WAR(std::logic_error, "Json parse error: " << NAME_PAR(emsg, m_props.GetParseError()) <<
+          NAME_PAR(eoffset, m_props.GetErrorOffset()));
+      }
     }
 
     bool isSubsetOf(const Properties & props) const
@@ -167,12 +158,12 @@ namespace shape {
 
     Result getMemberAsDouble(const std::string& name, double & val) const override
     {
-      return getMemberAs(name, val);
+      return getMemberAsNumber(name, val);
     }
 
     Result getMemberAsVectorDouble(const std::string& name, std::vector<double> & val) const override
     {
-      return getMemberAsVector(name, val);
+      return getMemberAsVectorNumber(name, val);
     }
 
     Result getMemberAsString(const std::string& name, std::string & val) const override
@@ -259,6 +250,37 @@ namespace shape {
       return retval;
     }
 
+    ///////////////////
+    Result setMemberAsBool(const std::string& name, const bool & val) override
+    {
+      return setMemberAs(name, val);
+    }
+
+    Result setMemberAsVectorBool(const std::string& name, const std::vector<bool> & val) override
+    {
+      return setMemberAsVector(name, val);
+    }
+
+    Result setMemberAsInt(const std::string& name, const int & val) override
+    {
+      return setMemberAs(name, val);
+    }
+
+    Result setMemberAsVectorInt(const std::string& name, const std::vector<int> & val) override
+    {
+      return setMemberAsVector(name, val);
+    }
+
+    Result setMemberAsDouble(const std::string& name, const double & val) override
+    {
+      return setMemberAs(name, val);
+    }
+
+    Result setMemberAsVectorDouble(const std::string& name, const std::vector<double> & val) override
+    {
+      return setMemberAsVector(name, val);
+    }
+
     Result setMemberAsString(const std::string& name, const std::string & val) override
     {
       Result retval = Result::ok;
@@ -281,6 +303,38 @@ namespace shape {
       return retval;
     }
 
+    Result setMemberAsVectorString(const std::string& name, const std::vector<std::string> & val) override
+    {
+      Result retval = Result::ok;
+      rapidjson::Document::AllocatorType& alloc = m_props.GetAllocator();
+      auto m = m_props.FindMember(name.c_str());
+      if (m == m_props.MemberEnd()) {
+        rapidjson::Value vct;
+        vct.SetArray();
+        for (auto & it : val) {
+          rapidjson::Value ins;
+          ins.SetString(it.c_str(), alloc);
+          vct.PushBack(ins, alloc);
+        }
+        rapidjson::Value jname(rapidjson::kStringType);
+        jname.SetString(name.c_str(), alloc);
+        m_props.AddMember(jname, vct, alloc);
+      }
+      if (!m->value.IsArray()) {
+        TRC_WARNING("Member already exists and expected: Json Array, detected: " << PAR(name) << NAME_PAR(type, m->value.GetType()));
+        retval = Result::type_error;
+      }
+      else {
+        m->value.Clear();
+        for (auto & it : val) {
+          rapidjson::Value ins;
+          ins.SetString(it.c_str(), alloc);
+          m->value.PushBack(ins, alloc);
+        }
+      }
+      return retval;
+    }
+    
  private:
     template<typename T>
     Result getMemberAs(const std::string& name, T & val) const
@@ -294,6 +348,24 @@ namespace shape {
         }
         val = m->value.Get<T>();
         retval = Result::ok;
+      }
+      return retval;
+    }
+
+    template<typename T>
+    Result getMemberAsNumber(const std::string& name, T & val) const
+    {
+      Result retval = Result::missing_error;
+      const auto & m = m_props.FindMember(name.c_str());
+      if (m != m_props.MemberEnd()) {
+        if (!m->value.IsNumber()) {
+          TRC_WARNING("Expected: " << typeid(T).name() << ", detected: " << PAR(name) << NAME_PAR(type, m->value.GetType()));
+          retval = Result::type_error;
+        }
+        else {
+          val = m->value.Get<T>();
+          retval = Result::ok;
+        }
       }
       return retval;
     }
@@ -319,6 +391,88 @@ namespace shape {
             val.push_back(itr->Get<T>());
           }
           retval = Result::ok;
+        }
+      }
+      return retval;
+    }
+
+    template<typename T>
+    Result getMemberAsVectorNumber(const std::string& name, std::vector<T> & val) const
+    {
+      Result retval = Result::missing_error;
+      const auto & m = m_props.FindMember(name.c_str());
+      if (m != m_props.MemberEnd()) {
+        const rapidjson::Value& vct = m->value;
+        if (!vct.IsArray()) {
+          TRC_WARNING("Expected: Json Array, detected: " << PAR(name) << NAME_PAR(type, vct.GetType()));
+          retval = Result::type_error;
+        }
+        else {
+          retval = Result::ok;
+          for (auto itr = vct.Begin(); itr != vct.End(); ++itr) {
+            if (!itr->IsNumber()) {
+              TRC_WARNING("Expected: " << typeid(T).name() << ", detected: " << PAR(name) << NAME_PAR(type, itr->GetType()));
+              retval = Result::type_error;
+              break;
+            }
+            val.push_back(itr->Get<T>());
+          }
+        }
+      }
+      return retval;
+    }
+
+    template<typename T>
+    Result setMemberAs(const std::string& name, const  T & val)
+    {
+      Result retval = Result::ok;
+      rapidjson::Document::AllocatorType& alloc = m_props.GetAllocator();
+      auto m = m_props.FindMember(name.c_str());
+      if (m == m_props.MemberEnd()) {
+        rapidjson::Value v;
+        v.Set(val, alloc);
+        rapidjson::Value jname(rapidjson::kStringType);
+        jname.SetString(name.c_str(), alloc);
+        m_props.AddMember(jname, v, alloc);
+      }
+      else if (!m->value.Is<T>()) {
+        TRC_WARNING("Member already exists and expected: " << typeid(T).name() << ", detected: " << PAR(name) << NAME_PAR(type, m->value.GetType()));
+        retval = Result::type_error;
+      }
+      else {
+        m->value.Set(val, alloc);
+      }
+      return retval;
+    }
+
+    template<typename T>
+    Result setMemberAsVector(const std::string& name, const std::vector<T> & val)
+    {
+      Result retval = Result::ok;
+      rapidjson::Document::AllocatorType& alloc = m_props.GetAllocator();
+      auto m = m_props.FindMember(name.c_str());
+      if (m == m_props.MemberEnd()) {
+        rapidjson::Value vct;
+        vct.SetArray();
+        for (const auto & it : val) {
+          rapidjson::Value ins;
+          ins.Set(it, alloc);
+          vct.PushBack(ins, alloc);
+        }
+        rapidjson::Value jname(rapidjson::kStringType);
+        jname.SetString(name.c_str(), alloc);
+        m_props.AddMember(jname, vct, alloc);
+      }
+      if (!m->value.IsArray()) {
+        TRC_WARNING("Member already exists and expected: Json Array, detected: " << PAR(name) << NAME_PAR(type, m->value.GetType()));
+        retval = Result::type_error;
+      }
+      else {
+        m->value.Clear();
+        for (const auto & it : val) {
+          rapidjson::Value ins;
+          ins.Set(it, alloc);
+          m->value.PushBack(ins, alloc);
         }
       }
       return retval;
