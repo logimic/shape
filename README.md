@@ -12,6 +12,8 @@ C++11 component framework.
 
 **Component Instance** is an object of a component created by the component constructor. Number of created Component Instances depends on an application configuration. E.g. file logging component can have three instances, one for critical errors, second for debug level and third for a specific component.
 
+**Instance Properties** is an object of properties created form component configuration.
+
 **Provided Interface** is running Component Instance implementing the Interface published to be used.
 
 **Required Interface** is published placeholder for  required Interface. If a Component Instance wants to use an Interface it publish the placeholder.
@@ -24,7 +26,9 @@ C++11 component framework.
 
 **Interface Optionality** is UNREQUIRED or MANDATORY. It means all MANDATORY Interfaces have to be attached.
 
-**Activate** is a Component Instance state when all MANDATORY Required Interfaces were attached and the instance is set by Shape to normal operation.
+**Interface Target** is narrowing of Required Interface to be delivered a component
+
+**Activate** is a Component Instance state when all MANDATORY Required Interfaces were attached and the instance is set by Shape to normal operation. Component properties are delivered via activate.
 
 **Dectivate** is a Component Instance state when some of MANDATORY Required Interface was detached and the instance is set by Shape to stop normal operation.
  
