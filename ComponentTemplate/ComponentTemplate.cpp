@@ -25,6 +25,7 @@
 
 #include "ITemplateService.h"
 #include "Trace.h"
+#include <algorithm>
 
 #include "shapeExpl__ComponentTemplate.hxx"
 
