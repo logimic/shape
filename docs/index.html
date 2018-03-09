@@ -45,9 +45,13 @@
             <code class="tab__pane active linux">
               $ git clone https://github.com/logimic/shape.git</br>
               $ cd shape </br>
-              $ ./buildMake.sh </br>
+              $ py shape.py --build </br>
             </code>
-            <code class="tab__pane win">$  gem install scribbler</code>
+            <code class="tab__pane win">
+              > git clone https://github.com/logimic/shape.git</br>
+              > cd shape </br>
+              > py shape.py --build </br>
+            </code>
           </pre>
         </div>
       </div>
@@ -63,11 +67,15 @@
           <pre class="nohighlight code">
             <!--<code class="tab__pane active mac">$  brew install scribbler</code>-->
             <code class="tab__pane active linux">
-              $ py shape --generate project ./path/MyProject</br>
-              $ cd ./path/MyProject </br>
-              $ py shape --build </br>
+              $ py shape.py --newProject MyProject</br>
+              $ cd ../MyProject </br>
+              $ py shape.py --build </br>
             </code>
-            <code class="tab__pane win">$  gem install scribbler</code>
+            <code class="tab__pane win">
+              > py shape.py --newProject MyProject</br>
+              > cd ../MyProject </br>
+              > py shape.py --build </br>              
+            </code>
           </pre>
         </div>
       </div>

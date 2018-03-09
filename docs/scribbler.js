@@ -14,18 +14,18 @@ if (document.getElementsByClassName('demo').length > 0) {
   var i = 0;
   var txt = `git clone https://github.com/logimic/shape.git
             pi@raspberrypi:~ $ cd shape
-            pi@raspberrypi:~ $ ./buildMake.sh
+            pi@raspberrypi:~ $ py shape.py --build
 
             Now create your project!
 
-            pi@raspberrypi:~ $ py shape --generate project ./path/MyProject
-            pi@raspberrypi:~ $ cd ./path/MyProject
-            pi@raspberrypi:~ $ py shape --generate component MyComponent1
-            pi@raspberrypi:~ $ py shape --build
+            pi@raspberrypi:~ $ py shape.py --newProject MyProject
+            pi@raspberrypi:~ $ cd ../MyProject
+            pi@raspberrypi:~ $ py shape.py --newComponent MyComponent1
+            pi@raspberrypi:~ $ py shape.py --build
 
             That's it, let's run it!
 
-            pi@raspberrypi:~ $ py shape --run`;
+            pi@raspberrypi:~ $ py shape.py --run`;
   var speed = 30;
 
   function typeItOut () {
