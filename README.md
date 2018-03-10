@@ -10,7 +10,7 @@ C++ modular and scalable framework.
 * [Add Component](#add-component)
 * [Build Project](#build-project)
 * [Run Project](#run-project)
-* [Understand Project Structure](#understand-project-structure)
+* [How It Works](#how-it-works)
 
 ## Prerequisites
 
@@ -45,13 +45,17 @@ Project has been generated to **MyProject** folder on the same level as **shape*
 $ cd ./path/MyProject
 $ py shape.py --newComponent MyComponent
 ```
-Each component is separate folder.
+Each component is alone folder in project directory.
 
 ## Build Project
 
 ```bash
 $ cd ./path/MyProject
 $ py shape.py --build
+```
+You can also specify generator
+```bash
+$ py shape.py --build "Visual Studio 15 2017"
 ```
 
 ## Run Project
@@ -60,27 +64,43 @@ $ py shape.py --build
 $ cd ./path/MyProject
 $ py shape.py --run
 ```
+For proper launch of all components, you have to specify proper  ```MyProject/startup/configuration/config.json``` structure - see below.
 
-## Understand Project Structure
+## How it works
+
+* [Main Function](#main-function)
+* [Components](#components)
+* [Building](#building)
+* [Run](#run)
+* [Launch configuration](#launch-configuration)
+* [Terms definition](#terms-definition)
+* [Naming convention](#naming-convention)
+
+```batch
+|- shape              (shape modular framework)
+|- MyProject          (your generated project)
+    |- build          (built binaries)
+    |- startup        (main function and configuration)
+    |- MyComponent1   (User Component)  
+    |- MyComponent2   (User Component)   
+    |- shape.py       (operation script)  
+    |- CMakeLists.txt (cmake script)  
+```
+**MyProject** user project and **shape** framework are on the same folder level.
 
 ### Main Function
 
-Shape uses CMake tool. To set necessary dependencies put to your solution root CmakeLists.txt
+```batch
+|-MyProject           (your generated project)
+    |-..
+    |-startup         (main function and configuration)
+        |- ..     
+        |- main.cpp   (main function)
+        |- ..
 
 ```
-FIND_PACKAGE(shape REQUIRED)
-message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
-include(${CMAKE_MODULE_PATH}/ShapeComponentDeclaration.cmake)
-include_directories(${shape_INCLUDE_DIRS})
-```
 
-To inject ${shape_INCLUDE_DIRS} to the solution call build e.g.:
-
-```
-cmake -G <generator> -Dshape_DIR:PATH=<path_to_Shape>  <build_dir>
-```
-
-To start Shape framework provide main function:
+Main function is **main.cpp** located in **startup** directory. This starts **shape** plug-in framework and other project components. Any other code shall be located in components.
 
 ```cpp
 #include <Shaper.h>
@@ -97,29 +117,20 @@ int main(int argc, char** argv)
   return 0;
 }
 ```
-The rest is hidden in Components as explained in next chapters
 
-## Components
+### Components
 
-The Components has to provide special Meta Class allowing Shape framework to create Component Instances, provide strong type check and bind all Provided and Required Instances. It is declared via auto-generated header file created by CMake. To declare the Meta Class put to CMakeLists.txt these lines:
-
+```batch
+|-MyProject                 (your generated project)
+    |-..
+    |-..
+    |-MyComponent1          (User Component)   
+        |- MyComponent1.h   (header file)  
+        |- MyComponent1.cpp (cpp file)
+        |- CMakeLists.h     (cmake script)
 ```
-set(COMPONENT shapeExpl::ComponentTemplate)
-DeclareShapeComponent(${COMPONENT})
-AddShapeProvidedInterface(${COMPONENT} shapeExpl::ITemplateService)
-AddShapeRequiredInterface(${COMPONENT} shape::ITraceService MANDATORY MULTIPLE)
-ConfigureShapeComponent(${COMPONENT} COMPONENT_HXX)
-```
-- **DeclareShapeComponent** declare Component Meta Class
-- **AddShapeProvidedInterface** declare implemented Provided Interface. Repeated for all interfaces
-- **AddShapeRequiredInterface** declare placeholder for Required Interface. Repeated for all interfaces
- - **UNREQUIRED | MANDATORY** declares optionality
- - **SINGLE | MULTIPLE** declares cardinality
-- **ConfigureShapeComponent** auto-generated header file
 
-Auto-generated file is named (from example) e.g: **shapeExpl__ComponentTemplate.hxx** and it is stored in ${CMAKE_CURRENT_BINARY_DIR} directory. This file has to be included in Component's implementation file.
-
-Including the header it enforces implementation of these functions:
+Main components files are **<component_name>.h** and **<component_name>.cpp**.
 
 ```cpp
 namespace shapeExpl { //namespace as declared in CMake
@@ -146,19 +157,14 @@ namespace shapeExpl { //namespace as declared in CMake
   };
 }
 ```
+If you create component manually you can use [ComponentTemplate](https://github.com/logimic/shape/tree/master/ComponentTemplate).
 
-The best way to prepare is to copy/paste/rename [ComponentTemplate](https://github.com/logimic/shape/tree/master/ComponentTemplate)
-We will prepare a script to do it in more convenient way.
-
-## 4 Using Shape
-
-
-### Shape Component Requirements and Recommendations
+#### Shape Component Requirements and Recommendations
 Shape framework is not magic. Component Instances are not isolated and runs in one process, so one bug can block or kill all process, so besides general C++ good practice please follow these:
 
 - It is required to provide default constructor
- - Dependency are satisfied in attachInterface(*iface) functions
- - Parameters are delivered in activate(*props) function
+ - Dependency are satisfied in attachInterface(\*iface) functions
+ - Parameters are delivered in activate(\*props) function
 - Store Provided Interface in attachInterface() and postpone some initialization actions to activate(), just to keep everything smoothly running at Start Up
 - Don't call blocking functions in activate(), start dedicated thread instead, see example: [Example1_Thread](https://github.com/logimic/shape/tree/master/examples/Example1_Thread)
 - Catch all exceptions generated in a thread within this thread
@@ -171,10 +177,128 @@ Shape framework is not magic. Component Instances are not isolated and runs in o
 - Be careful with pPassing Class instances via Interfaces via shared_ptr<>. The instances has to be destroyed in correct order as unloading shared library before calling destructor may lead to crash during shutdown.
 - Shared libraries with components has to be built wit the same tool set as it is allowed to pass C++ objects via interfaces. It is assured by Meta Class during Start Up via Compiler identification. It may be problem with pre-build shared libraries
 
+### Building
 
-### Start Up Configuration
+#### Automatic Building
 
-Main function (above ) expects as 1.st cmdl parameter JSON file in this format:
+Shape and project use **CMake** for building. You can build it automatically via these commands:
+
+```bash
+$ cd ./shape
+$ py shape.py --build
+$ cd ./MyProject
+$ py shape.py --build
+```
+
+These take your default compiler or you can specify it as an option:
+
+```bash
+$ py shape.py --build "Visual Studio 15 2017 Win64"
+```
+
+#### Manual building
+
+Build **shape** in its directory:
+```
+rem //launch from <build_dir>
+cmake -G "Visual Studio 15 2017" <path_to_root_CMakeLists.txt>
+rem //build from generated build environment
+cmake --build <build_dir>
+```
+Build your project **MyProjects** in its directory:
+```
+rem //launch from <build_dir>
+cmake -G <generator> -Dshape_DIR:PATH=<path_to_Shape>  <path_to_root_CMakeLists.txt>
+rem //build from generated build environment
+cmake --build <build_dir>
+```
+
+#### Configure CMake for project
+
+```batch
+|-MyProject           (your generated project)
+    |- ..
+    |- CMakeLists.txt  (main function and configuration)
+    |- ..
+```
+
+Please check necessary dependencies in root **CMakeLists.txt**:
+
+```
+FIND_PACKAGE(shape REQUIRED)
+message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
+include(${CMAKE_MODULE_PATH}/ShapeComponentDeclaration.cmake)
+include_directories(${shape_INCLUDE_DIRS})
+
+```
+
+Each component has its own **CMakeLists.txt**:
+
+```batch
+|-MyProject                 (your generated project)
+    |- ..
+    |- ..
+    |- MyComponent1         (User Component)   
+        |- ..
+        |- CMakeLists.h     (cmake script)
+```
+
+
+The Components has to provide special Meta Class allowing Shape framework to create Component Instances, provide strong type check and bind all Provided and Required Instances. It is declared via auto-generated header file created by CMake. To declare the Meta Class put to CMakeLists.txt these lines:
+
+```
+set(COMPONENT shapeExpl::ComponentTemplate)
+DeclareShapeComponent(${COMPONENT})
+AddShapeProvidedInterface(${COMPONENT} shapeExpl::ITemplateService)
+AddShapeRequiredInterface(${COMPONENT} shape::ITraceService MANDATORY MULTIPLE)
+ConfigureShapeComponent(${COMPONENT} COMPONENT_HXX)
+```
+- **DeclareShapeComponent** declare Component Meta Class
+- **AddShapeProvidedInterface** declare implemented Provided Interface. Repeated for all interfaces
+- **AddShapeRequiredInterface** declare placeholder for Required Interface. Repeated for all interfaces
+- **UNREQUIRED | MANDATORY** declares optionality
+- **SINGLE | MULTIPLE** declares cardinality
+- **ConfigureShapeComponent** auto-generated header file
+
+Auto-generated file is named (from example) e.g: **shapeExpl__ComponentTemplate.hxx** and it is stored in \${CMAKE_CURRENT_BINARY_DIR} directory. This file has to be included in Component's implementation file **cpp**.
+
+### Run project
+
+When you run project, **shape** framework is started automatically. You can run project via script:
+
+```bash
+$ cd ./MyProject
+$ py shape.py --run
+```
+
+Or manually via **startup.exe** with one parameter which is path to **config.json**
+
+```batch
+|-MyProject                     (your generated project)
+    |- build                    (building folder)
+        |- VS14_2015  
+        |- ..
+        |- startup              (folder with main)     
+            |- ..
+            |- configuration   
+            |   |- config.json  (configuration file)   
+            |   |- ..  
+            |
+            |- Debug  
+                |- startup.exe  (start exe file)
+                |- ..  
+```
+
+Example:
+
+```bash
+$ cd ./MyProject/build/VS14_2015/startup
+$ ./Debug/startup.exe  ./configuration/config.json
+```
+
+### Launch configuration
+
+Launch configuration is defined in **config.json** file:
 
 ```json
 {
@@ -234,7 +358,7 @@ Lets postpone details explanation now. The most important for launching is:
   - **enabled** is on/off flag if the component shall be loaded or ignored.
   - **startlevel** is start order (lower - more prio), Note it is not important to keep specific order, but it may be appropriate in some cases (e.g. more dependent components started at the end)
 
-### Component Instances configuration
+#### Component Instances configuration
 Components are factories creating Instances according delivered configurations.
 The configurations are JSON files and groupped in a directory specified in **Start Up Configuration**
 The files names are not important but it must have at least two mandatory items:
@@ -281,17 +405,14 @@ Then valid **Component Instance Configuration** can be declared in these files w
 }
 ```
 
-### Component Instances Properties
+#### Component Instances Properties
 - **activate** Component Instance gets its Properties via **activate(*props)** function. It can be used to read parameters necessary for runtime.
 - **modify** Component Instance gets modified Properties via **modify(*props)** function. It can be used to read parameters necessary for runtime.
 
 Note, Shape interface allowing usage of **modify** during runtime is still in developement.
 
 
-
-
-
-## 1 Terms definition
+### Terms definition
 
 **Module** is distributable software in form of shared library. Includes components data classes and logically merges related SW parts.
 
@@ -323,7 +444,7 @@ Note, Shape interface allowing usage of **modify** during runtime is still in de
 
 **Service** is represented by its Interface. Provides service like doing command, send data, parse data, calculate data, registering call-back, etc. Service is a published Interface (Provided or Required) within Shape framework.
 
-## 2 Naming convention
+### Naming convention
 * Name of Interface class shall begin with **I** e.g. IChannel and contains pure virtual methods.
 * Name of Interface class declaring Service shall end with **Service, Srvc or S** e.g. **ISchedulerDataSrvc**
 * Name of component shall begin with **Cm** e.g. **CmSchedulerData**.

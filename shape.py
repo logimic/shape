@@ -38,9 +38,8 @@ def updateCpp (path):
 
 def userMakefile (path, name):
     os.chdir(path)
-    print("Current directory is : " + os.getcwd())
-
-    print("Creating Makefile.txt for " + name)
+    
+    print("Creating Makefile.txt for project.." + name)
     fo = open("CMakeLists.txt", "w")
 
     fo.write ("project(" + name + ")")
@@ -76,14 +75,12 @@ def userMakefile (path, name):
     fo.write ("\n\nadd_subdirectory(startup)")
     fo.write ("\nadd_subdirectory(Example1_Thread)")
 
-
     fo.close()
 
 def makeBat (path, projName):
     os.chdir(path)
-    print("Current directory is : " + os.getcwd())
 
-    print("Creating Makefile.txt for " + projName)
+    print("Creating build32.bat for " + projName)
     fo = open("build32.bat", "w")
 
     fo.write ("set project = " + projName)
@@ -113,28 +110,13 @@ def makeBat (path, projName):
 
     fo.close()
 
-# Copies and replaces BAT file
-def makeBat2 (path, projName):
-    os.chdir(path)
-    print("Current directory is : " + os.getcwd())    
-
-    f = open(os.path.normpath(mainDir + "/build32.bat"),'r')
-    filedata = f.read()
-    f.close()
-
-    newdata = filedata.replace("set project=cobalt","set project=" + projName)
-
-    f = open(os.path.normpath(path + "/build32.bat"),'w')
-    f.write(newdata)
-    f.close()    
-
 # Generate project to folder 'name' on the same level as 'shape' folder
 def generateProject(name):
 
     dirname = os.path.basename(os.getcwd())
 
     if dirname == "shape":
-        print ("I am generating project..." + name)
+        print ("I am generating project.." + name)
 
         # Create project folder
         os.chdir("..")
@@ -176,7 +158,7 @@ def generateComponent(name):
     if dirname == "shape":
         print("Please call this command from you project folder, not shape folder!")
     else: 
-        print ("cur proj name is:" + str(dirname))
+        # print ("cur proj name is:" + str(dirname))
 
         compPath = os.path.normpath(mainDir + "/" + name)
 
@@ -232,7 +214,7 @@ def generateComponent(name):
             f.close()     
 
 # Build project
-def build():
+def build(generator):
 
     dirname = os.path.basename(os.getcwd())
 
@@ -246,8 +228,13 @@ def build():
             os.makedirs(buildDir)  
 
         os.chdir(buildDir)
-        command = "cmake " + " " + mainDir
 
+        if generator == "default":
+            command = "cmake " + " " + mainDir
+        else:
+            command = "cmake -G \"" + generator +  "\" " + mainDir
+
+        print("command: " + command)  
         call(command) 
 
         call("cmake --build " + buildDir) 
@@ -260,16 +247,20 @@ def build():
         buildDir = os.path.normpath(mainDir + "/build/VS14_2015") 
         os.chdir(mainDir)
 
-        print("Shape: " + shape)  
-        print("buildDir: " + buildDir)  
-        print("cur Dir: " + os.getcwd())  
+        # print("Shape: " + shape)  
+        # print("buildDir: " + buildDir)  
+        # print("cur Dir: " + os.getcwd())  
 
         # Create build dir
         if not os.path.exists(buildDir):
             os.makedirs(buildDir)    
 
         os.chdir(buildDir)
-        command = "cmake -Dshape_DIR:PATH=" + shape + " " + mainDir
+
+        if generator == "default":
+            command = "cmake -Dshape_DIR:PATH=" + shape + " " + mainDir
+        else:
+            command = "cmake -G \"" + generator + "\" -Dshape_DIR:PATH=" + shape + " " + mainDir
 
         print("command: " + command)  
 
@@ -294,9 +285,9 @@ def run():
         command = startup + " " + config
 
         os.chdir(startupDir)
-        print("Current directory is : " + os.getcwd())    
-        print("Call: " + startup)    
-        print("Command: " + command)    
+        # print("Current directory is : " + os.getcwd())    
+        # print("Call: " + startup)    
+        # print("Command: " + command)    
 
         call(command)    
 
@@ -324,7 +315,10 @@ def main(argv):
         elif cmd == "--run":
                 run()  
         elif cmd == "--build":
-                build()                                 
+            if total > 2:                
+                build(sys.argv[2])  
+            else:                               
+                build("default")
         elif cmd == "--help":
             print ("\n--- SHAPE help ---")
             print ("\npy shape.py [command] [options]\n")
