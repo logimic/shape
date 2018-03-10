@@ -88,7 +88,7 @@ For proper launch of all components, you have to specify proper  ```MyProject/st
 ```
 **MyProject** user project and **shape** framework are on the same folder level.
 
-### Main Function
+### 1 Main Function
 
 ```batch
 |-MyProject           (your generated project)
@@ -118,7 +118,7 @@ int main(int argc, char** argv)
 }
 ```
 
-### Components
+### 2 Components
 
 ```batch
 |-MyProject                 (your generated project)
@@ -177,7 +177,7 @@ Shape framework is not magic. Component Instances are not isolated and runs in o
 - Be careful with pPassing Class instances via Interfaces via shared_ptr<>. The instances has to be destroyed in correct order as unloading shared library before calling destructor may lead to crash during shutdown.
 - Shared libraries with components has to be built wit the same tool set as it is allowed to pass C++ objects via interfaces. It is assured by Meta Class during Start Up via Compiler identification. It may be problem with pre-build shared libraries
 
-### Building
+### 3 Building
 
 #### Automatic Building
 
@@ -262,7 +262,7 @@ ConfigureShapeComponent(${COMPONENT} COMPONENT_HXX)
 
 Auto-generated file is named (from example) e.g: **shapeExpl__ComponentTemplate.hxx** and it is stored in \${CMAKE_CURRENT_BINARY_DIR} directory. This file has to be included in Component's implementation file **cpp**.
 
-### Run project
+### 4 Run project
 
 When you run project, **shape** framework is started automatically. You can run project via script:
 
@@ -296,7 +296,7 @@ $ cd ./MyProject/build/VS14_2015/startup
 $ ./Debug/startup.exe  ./configuration/config.json
 ```
 
-### Launch configuration
+### 5 Launch configuration
 
 Launch configuration is defined in **config.json** file:
 
@@ -412,7 +412,7 @@ Then valid **Component Instance Configuration** can be declared in these files w
 Note, Shape interface allowing usage of **modify** during runtime is still in developement.
 
 
-### Terms definition
+### 6 Terms definition
 
 **Module** is distributable software in form of shared library. Includes components data classes and logically merges related SW parts.
 
@@ -444,7 +444,7 @@ Note, Shape interface allowing usage of **modify** during runtime is still in de
 
 **Service** is represented by its Interface. Provides service like doing command, send data, parse data, calculate data, registering call-back, etc. Service is a published Interface (Provided or Required) within Shape framework.
 
-### Naming convention
+### 7 Naming convention
 * Name of Interface class shall begin with **I** e.g. IChannel and contains pure virtual methods.
 * Name of Interface class declaring Service shall end with **Service, Srvc or S** e.g. **ISchedulerDataSrvc**
 * Name of component shall begin with **Cm** e.g. **CmSchedulerData**.
