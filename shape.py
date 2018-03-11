@@ -115,33 +115,38 @@ def generateProject(name):
 
     dirname = os.path.basename(os.getcwd())
 
-    if dirname == "shape":
-        print ("I am generating project.." + name)
+    if dirname == "shape":        
 
         # Create project folder
         os.chdir("..")
         projFolder = os.path.normpath(os.getcwd() + "/" + name)    
-        pathlib.Path(projFolder).mkdir(parents=True, exist_ok=True)
 
-        # Copy script    
-        shutil.copy2(os.path.normpath(mainDir + "/shape.py"),
-                os.path.normpath(projFolder + "/shape.py"))    
+        if (os.path.exists(projFolder)):
+            print("Project already exists! Nothing has been done.")
+        else:
+            print ("I am generating project.." + name)
 
-        # Copy example
-        copytree(os.path.normpath(mainDir + "/examples/Example1_Thread"),
-                os.path.normpath(projFolder + "/Example1_Thread"))
-        # Copy startup
-        copytree(os.path.normpath(mainDir + "/startup"),
-                os.path.normpath(projFolder + "/startup"))        
+            pathlib.Path(projFolder).mkdir(parents=True, exist_ok=True)
 
-        # Create makefile
-        userMakefile(projFolder, name)     
+            # Copy script    
+            shutil.copy2(os.path.normpath(mainDir + "/shape.py"),
+                    os.path.normpath(projFolder + "/shape.py"))    
 
-        # Create BAT file
-        makeBat (projFolder, name)
+            # Copy example
+            copytree(os.path.normpath(mainDir + "/examples/Example1_Thread"),
+                    os.path.normpath(projFolder + "/Example1_Thread"))
+            # Copy startup
+            copytree(os.path.normpath(mainDir + "/startup"),
+                    os.path.normpath(projFolder + "/startup"))        
 
-        # Patch CPP
-        updateCpp(os.path.normpath(projFolder + "/startup/main.cpp"))
+            # Create makefile
+            userMakefile(projFolder, name)     
+
+            # Create BAT file
+            makeBat (projFolder, name)
+
+            # Patch CPP
+            updateCpp(os.path.normpath(projFolder + "/startup/main.cpp"))
 
     else:
         print("You must be in shape folder...")
