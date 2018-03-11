@@ -1,65 +1,56 @@
 
 # Shape
-C++ modular and scalable framework.
+C++11 component framework.
 
-## Table of Contents
+## 1 Terms definition
 
-* [Prerequisites](#prerequisites)
-* [Usage](#usage)
-* [Generate Project](#generate-project)
-* [Add Component](#add-component)
-* [Build Project](#build-project)
-* [Run Project](#run-project)
-* [Understand Project Structure](#understand-project-structure)
+**Module** is distributable software in form of shared library. Includes components data classes and logically merges related SW parts.
 
-## Prerequisites
-- Cmake
-- Git
-- Pyhon 3.x
+**Interface** is pure virtual (abstract) class containing methods (functions). Used parameters should be general not exposing implementation details.
 
-## Usage
+**Component** is class which implements Interface. There can be more components implementing the same Interface. E.g. component logging to file and component logging into database. Both can implement the same Interface. Component may use other Interfaces implemented by other Components.
 
-```bash
-$ git clone https://github.com/logimic/shape.git
-$ cd shape
-$ build32.bat         #for Win x86
-$ build64.bat         #for Win x64
-$ ./buildMake.sh      #for Linux
-$ ./buildEclipse.sh   #for Linux Eclipse IDE
-```
+**Component Instance** is an object of a component created by the component constructor. Number of created Component Instances depends on an application configuration. E.g. file logging component can have three instances, one for critical errors, second for debug level and third for a specific component.
 
-## Generate Project
+**Instance Properties** is an object of properties created form component configuration.
 
-```bash
-$ py shape --generate project ./path/MyProject
-```
+**Provided Interface** is running Component Instance implementing the Interface published to be used.
 
-TODO: we need to create "shape.py" script.
+**Required Interface** is published placeholder for  required Interface. If a Component Instance wants to use an Interface it publish the placeholder.
 
-## Add Component
+**Attach Interface** is delivering Provided Interface to Required Interface placeholder.
 
-```bash
-$ cd ./path/MyProject
-$ py shape --generate component MyComponent1
-```
+**Detach Interface** is withdrawal of Provided Interface to Required Interface placeholder.
 
-## Build Project
+**Interface Cardinality** is SINGLE or MULTIPLE. It means Required Interface instance can be attached just once or all instantiated Interfaces can be attached.
 
-```bash
-$ cd ./path/MyProject
-$ py shape --build
-```
+**Interface Optionality** is UNREQUIRED or MANDATORY. It means all MANDATORY Interfaces have to be attached.
 
-## Run Project
+**Interface Target** is narrowing of Required Interface to be delivered a component
 
-```bash
-$ cd ./path/MyProject
-$ py shape --run
-```
+**Activate** is a Component Instance state when all MANDATORY Required Interfaces were attached and the instance is set by Shape to normal operation. Component properties are delivered via activate.
 
-## Understand Project Structure
+**Dectivate** is a Component Instance state when some of MANDATORY Required Interface was detached and the instance is set by Shape to stop normal operation.
+ 
+**Service** is represented by its Interface. Provides service like doing command, send data, parse data, calculate data, registering call-back, etc. Service is a published Interface (Provided or Required) within Shape framework.
 
-### Main Function
+## 2 Naming convention 
+* Name of Interface class shall begin with **I** e.g. IChannel and contains pure virtual methods.
+* Name of Interface class declaring Service shall end with **Service, Srvc or S** e.g. **ISchedulerDataSrvc**
+* Name of component shall begin with **Cm** e.g. **CmSchedulerData**.
+
+## 3 Building Shape
+- Install Cmake
+- Install Git
+- Pull via Git https://github.com/logimic/shape.git
+- Call script
+ - build32.bat for Win x86
+ - build64.bat for Win x64
+ - buildMake.sh for Lin make
+ - buildEclipse.sh for Lin Eclipse IDE
+
+## 4 Using Shape
+### Shape base solution
 
 Shape uses CMake tool. To set necessary dependencies put to your solution root CmakeLists.txt
 
@@ -95,8 +86,7 @@ int main(int argc, char** argv)
 ```
 The rest is hidden in Components as explained in next chapters
 
-## Components
-
+### Shape Component Declaration
 The Components has to provide special Meta Class allowing Shape framework to create Component Instances, provide strong type check and bind all Provided and Required Instances. It is declared via auto-generated header file created by CMake. To declare the Meta Class put to CMakeLists.txt these lines:
 
 ```
@@ -110,7 +100,7 @@ ConfigureShapeComponent(${COMPONENT} COMPONENT_HXX)
 - **AddShapeProvidedInterface** declare implemented Provided Interface. Repeated for all interfaces
 - **AddShapeRequiredInterface** declare placeholder for Required Interface. Repeated for all interfaces
  - **UNREQUIRED | MANDATORY** declares optionality
- - **SINGLE | MULTIPLE** declares cardinality
+ - **SINGLE | MULTIPLE** declares cardinality 
 - **ConfigureShapeComponent** auto-generated header file
 
 Auto-generated file is named (from example) e.g: **shapeExpl__ComponentTemplate.hxx** and it is stored in ${CMAKE_CURRENT_BINARY_DIR} directory. This file has to be included in Component's implementation file.
@@ -145,9 +135,6 @@ namespace shapeExpl { //namespace as declared in CMake
 
 The best way to prepare is to copy/paste/rename [ComponentTemplate](https://github.com/logimic/shape/tree/master/ComponentTemplate)
 We will prepare a script to do it in more convenient way.
-
-## 4 Using Shape
-
 
 ### Shape Component Requirements and Recommendations
 Shape framework is not magic. Component Instances are not isolated and runs in one process, so one bug can block or kill all process, so besides general C++ good practice please follow these:
@@ -281,45 +268,4 @@ Then valid **Component Instance Configuration** can be declared in these files w
 - **activate** Component Instance gets its Properties via **activate(*props)** function. It can be used to read parameters necessary for runtime.
 - **modify** Component Instance gets modified Properties via **modify(*props)** function. It can be used to read parameters necessary for runtime.
 
-Note, Shape interface allowing usage of **modify** during runtime is still in developement.
-
-
-
-
-
-## 1 Terms definition
-
-**Module** is distributable software in form of shared library. Includes components data classes and logically merges related SW parts.
-
-**Interface** is pure virtual (abstract) class containing methods (functions). Used parameters should be general not exposing implementation details.
-
-**Component** is class which implements Interface. There can be more components implementing the same Interface. E.g. component logging to file and component logging into database. Both can implement the same Interface. Component may use other Interfaces implemented by other Components.
-
-**Component Instance** is an object of a component created by the component constructor. Number of created Component Instances depends on an application configuration. E.g. file logging component can have three instances, one for critical errors, second for debug level and third for a specific component.
-
-**Instance Properties** is an object of properties created form component configuration.
-
-**Provided Interface** is running Component Instance implementing the Interface published to be used.
-
-**Required Interface** is published placeholder for  required Interface. If a Component Instance wants to use an Interface it publish the placeholder.
-
-**Attach Interface** is delivering Provided Interface to Required Interface placeholder.
-
-**Detach Interface** is withdrawal of Provided Interface to Required Interface placeholder.
-
-**Interface Cardinality** is SINGLE or MULTIPLE. It means Required Interface instance can be attached just once or all instantiated Interfaces can be attached.
-
-**Interface Optionality** is UNREQUIRED or MANDATORY. It means all MANDATORY Interfaces have to be attached.
-
-**Interface Target** is narrowing of Required Interface to be delivered a component
-
-**Activate** is a Component Instance state when all MANDATORY Required Interfaces were attached and the instance is set by Shape to normal operation. Component properties are delivered via activate.
-
-**Dectivate** is a Component Instance state when some of MANDATORY Required Interface was detached and the instance is set by Shape to stop normal operation.
-
-**Service** is represented by its Interface. Provides service like doing command, send data, parse data, calculate data, registering call-back, etc. Service is a published Interface (Provided or Required) within Shape framework.
-
-## 2 Naming convention
-* Name of Interface class shall begin with **I** e.g. IChannel and contains pure virtual methods.
-* Name of Interface class declaring Service shall end with **Service, Srvc or S** e.g. **ISchedulerDataSrvc**
-* Name of component shall begin with **Cm** e.g. **CmSchedulerData**.
+Note, Shape interface allowing usage of **modify** during runtime is still in developement. 
