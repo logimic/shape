@@ -64,7 +64,7 @@ $ py shape.py --build "Visual Studio 15 2017"
 $ cd ./path/MyProject
 $ py shape.py --run
 ```
-For proper launch of all components, you have to specify proper  ```MyProject/startup/configuration/config.json``` structure - see below.
+**Note:** Before launch please specify proper  ```MyProject/startup/configuration/config.json``` structure - [see below](#launch-configuration).
 
 ## How it works
 
@@ -294,6 +294,10 @@ Example:
 ```bash
 $ cd ./MyProject/build/VS14_2015/startup
 $ ./Debug/startup.exe  ./configuration/config.json
+
+Win:
+> cd .\MyProject\build\VS14_2015\startup
+> .\Debug\startup.exe  .\configuration\config.json  
 ```
 
 ### 5 Launch configuration
@@ -302,13 +306,13 @@ Launch configuration is defined in **config.json** file:
 
 ```json
 {
-  "applicationName": "AppName",
+  "applicationName": "ShapeTest",
   "resourceDir": "",
   "dataDir": "",
   "cacheDir": "cache",
   "userDir": "",
   "configurationDir": "configuration",
-  "deploymentDir": "../../../../../../shape/build/VS14_2015_x64/bin/Debug",
+  "deploymentDir": "../../../../shape/build/VS14_2015/bin/Debug",
   "components": [
     {
       "name": "shape::TraceFormatService",
@@ -332,21 +336,22 @@ Launch configuration is defined in **config.json** file:
       "startlevel": -2
     },
     {
-      "name": "abc::CoolComponent",
-      "libraryPath": "../CoolComponent/Debug",
-      "libraryName": "CoolComponent",
+      "name": "shape::Example1_Thread",
+      "libraryPath": "../Example1_Thread/Debug",
+      "libraryName": "Example1_Thread",
       "enabled": true,
       "startlevel": 0
     },
     {
-      "name": "abc::HotComponent",
-      "libraryPath": "../HotComponent/Debug",
-      "libraryName": "HotComponent",
+      "name": "shape::MyComponent",
+      "libraryPath": "../MyComponent/Debug",
+      "libraryName": "MyComponent",
       "enabled": true,
       "startlevel": 0
     }
   ]
 }
+
 ```
 Lets postpone details explanation now. The most important for launching is:
 - **configurationDir** directory with components configuration files relative to working directory.
