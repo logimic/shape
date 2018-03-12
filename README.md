@@ -64,7 +64,7 @@ $ py shape.py --build "Visual Studio 15 2017"
 $ cd ./path/MyProject
 $ py shape.py --run
 ```
-**Note:** Before launch please specify proper  ```MyProject/startup/configuration/config.json``` structure - [see below](#launch-configuration).
+**Note:** Before launch please specify proper  ```MyProject/startup/configuration/config.json``` structure - [see below](#5-launch-configuration).
 
 ## How it works
 
