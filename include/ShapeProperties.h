@@ -1,5 +1,7 @@
 #pragma once
 
+#include "rapidjson/rapidjson.h"
+#include "rapidjson/document.h"
 #include <vector>
 #include <string>
 #include <memory>
@@ -21,6 +23,8 @@ namespace shape {
       missing_error,
       type_error,
     };
+
+    virtual const rapidjson::Document& getAsJson() const = 0;
 
     virtual void parseFile(const std::string& fname) = 0;
     virtual void encodeFile(const std::string& fname) const = 0;

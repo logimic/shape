@@ -36,6 +36,11 @@ namespace shape {
       return *this;
     }
 
+    const rapidjson::Document& getAsJson() const override
+    {
+      return m_props;
+    }
+
     void parseFile(const std::string& fname) override
     {
       std::ifstream ifs(fname);

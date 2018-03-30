@@ -434,10 +434,10 @@ namespace shape
   int ComponentManager::init(const std::vector<std::string>& commandLine, PropertiesJson* props)
   {
     cout <<
-      "================================================================" << endl <<
-      "                     Shape.it" << endl <<
-      "================================================================" << endl <<
-      "Copyright 2018 Logimic.com" << endl << endl;
+      //"================================================================" << endl <<
+      //"                     Shape.it" << endl <<
+      //"================================================================" << endl <<
+      "Running on Shape component system https://github.com/logimic/shape" << endl << endl;
 
     TRC_FUNCTION_ENTER(NAME_PAR(time, time(nullptr)));
 

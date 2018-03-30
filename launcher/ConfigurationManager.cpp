@@ -16,6 +16,7 @@
 
 #define configurationManager_EXPORTS
 #include "ShapeDefines.h"
+#include <iostream>
 
 #ifdef SHAPE_PLATFORM_WINDOWS
 #include <windows.h>
@@ -213,6 +214,7 @@ namespace shape
 
       }
       catch (std::exception & e) {
+        std::cerr << "Cannot parse: " << NAME_PAR(fname, *it) << std::endl;
         CATCH_EXC_TRC_WAR(std::exception, e, "");
       }
     }
