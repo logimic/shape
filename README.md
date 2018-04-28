@@ -1,5 +1,8 @@
 
 # Shape
+
+![](docs/images/logimic_shape.png)
+
 C++ modular and scalable framework.
 
 ## Table of Contents
