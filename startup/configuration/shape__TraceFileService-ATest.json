@@ -1,0 +1,15 @@
+{
+  "component": "shape::TraceFileService",
+  "instance": "shape::TraceFileService-ATrace",
+
+  "path": "aaa",
+  "filename": "ATestTrace.txt",
+  "timestampFiles": true,
+
+  "VerbosityLevels": [
+    {
+      "channel": 0,
+      "level": "DBG"
+    }
+  ]
+}

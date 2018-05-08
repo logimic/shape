@@ -21,6 +21,7 @@
 #include "ShapeDefines.h"
 #include <fstream>
 #include <iostream>
+#include <iomanip>
 #include <mutex>
 
 #ifdef SHAPE_PLATFORM_WINDOWS
@@ -40,13 +41,16 @@ namespace shape {
   class TraceFileService::Imp
   {
   private:
-    std::ofstream m_traceFile;
-    std::string m_tracePath;
+    std::ofstream m_file;
+    std::string m_path;
+    std::string m_fname;
     std::string m_tracePathFile;
     long long m_maxFileSize = FILE_SIZE_1MB;
     std::mutex m_mtx;
     std::map<int, int> m_traceLevelMap;
     ITraceFormatService* m_formatService = nullptr;
+    bool m_fileError = false;
+    bool m_timestamp = false;
 
   public:
     Imp()
@@ -60,6 +64,8 @@ namespace shape {
 
     bool isValid(int level, int chan) const
     {
+      if (m_fileError)
+        return m_fileError;
       auto it = m_traceLevelMap.find(chan);
       return (it != m_traceLevelMap.end() && it->second >= level);
     }
@@ -73,15 +79,15 @@ namespace shape {
         openFile();
 
         // if file size is greater than m_maxFileSize, reset log file
-        if (m_traceFile.tellp() > m_maxFileSize)
+        if (m_file.tellp() > m_maxFileSize)
         {
           resetFile();
         }
         if (m_formatService)
-          m_traceFile << m_formatService->format(level, channel, moduleName, sourceFile, sourceLine, funcName, msg);
+          m_file << m_formatService->format(level, channel, moduleName, sourceFile, sourceLine, funcName, msg);
         else
           //TODO better default format
-          m_traceFile << (int)level << ':' << channel << " " << moduleName << msg;
+          m_file << (int)level << ':' << channel << " " << moduleName << msg;
       }
     }
 
@@ -103,21 +109,7 @@ namespace shape {
           }
 
           // path
-          GET_POSSIBLE_MEMBER_AS(*props, String, "path", "", m_tracePath);
-
-          // filename
-          std::string fname;
-          GET_MEMBER_AS(*props, String, "filename", "", fname);
-          if (!fname.empty()) {
-            m_tracePathFile = m_tracePath.empty() ? "." : m_tracePath;
-            m_tracePathFile += "/";
-            m_tracePathFile += fname;
-            openFile();
-          }
-          else {
-            THROW_EXC(std::logic_error, "empty file name");
-            closeFile();
-          }
+          GET_POSSIBLE_MEMBER_AS(*props, String, "path", "", m_path);
 
           // file size limit
           int maxSize = 0;
@@ -126,6 +118,18 @@ namespace shape {
             long long ms = maxSize * FILE_SIZE_1MB;
             if (maxSize > FILE_SIZE_1MB)
               m_maxFileSize = maxSize;
+          }
+
+          GET_POSSIBLE_MEMBER_AS(*props, Bool, "timestampFiles", "", m_timestamp);
+
+          // filename
+          GET_MEMBER_AS(*props, String, "filename", "", m_fname);
+          if (!m_fname.empty()) {
+            openFile();
+          }
+          else {
+            THROW_EXC(std::logic_error, "empty file name");
+            closeFile();
           }
 
         }
@@ -148,46 +152,55 @@ namespace shape {
         m_formatService = nullptr;
     }
 
-
-    std::string getLogFileName()
-    {
-      if (m_tracePathFile.empty())
-      {
-        std::string logStr(m_tracePath);
-
-        if (!logStr.empty() && *(logStr.rbegin()) != '/')
-          logStr.push_back('/');
-
-#ifdef SHAPE_PLATFORM_WINDOWS
-        _mkdir(logStr.c_str());
-#else
-        mkdir(logStr.c_str(), 0755);
-#endif
-
-        //logStr += me->getApplicationName() + "-" + std::to_string(me->getPid()) + ".log";
-        logStr += "aaa-123.log";
-
-        return logStr;
-      }
-      else
-      {
-        return m_tracePathFile;
-      }
-    }
-
     void openFile()
     {
       static unsigned count = 0;
-      if (!m_traceFile.is_open())
+
+      if (m_path.empty()) {
+        m_tracePathFile = "./";
+      }
+      else {
+        m_tracePathFile = m_path;
+        if (*(m_tracePathFile.rbegin()) != '/')
+          m_tracePathFile.push_back('/');
+#ifdef SHAPE_PLATFORM_WINDOWS
+        _mkdir(m_tracePathFile.c_str());
+#else
+        mkdir(logStr.c_str(), 0755);
+#endif
+      }
+      if (!m_timestamp) {
+        m_tracePathFile += m_fname;
+      }
+      else {
+        auto timePoint = std::chrono::system_clock::now();
+        auto fromMs = std::chrono::duration_cast<std::chrono::microseconds>(timePoint.time_since_epoch()).count() % 1000;
+        auto time = std::chrono::system_clock::to_time_t(timePoint);
+        auto tm = *std::localtime(&time);
+
+        char buf[80];
+        strftime(buf, sizeof(buf), "%Y-%m-%d-%H-%M-", &tm);
+        std::ostringstream os;
+        os << m_tracePathFile << buf << std::setw(3) << std::setfill('0') << fromMs << '-' << m_fname;
+        m_tracePathFile = os.str();
+      }
+
+      if (!m_file.is_open() && !m_fileError)
       {
-        m_traceFile.open(getLogFileName(), std::ofstream::out | std::ofstream::trunc);
+       m_file.open(m_tracePathFile, std::ofstream::out | std::ofstream::trunc);
+        if (!m_file.is_open()) {
+          m_fileError = true;
+          std::cerr << "Cannot open: " PAR(m_tracePathFile) << std::endl;
+        }
       }
     }
 
     void closeFile()
     {
-      m_traceFile.flush();
-      m_traceFile.close();
+      if (m_file.is_open()) {
+        m_file.flush();
+        m_file.close();
+      }
     }
 
     void resetFile()
