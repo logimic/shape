@@ -166,7 +166,7 @@ namespace shape {
 #ifdef SHAPE_PLATFORM_WINDOWS
         _mkdir(m_tracePathFile.c_str());
 #else
-        mkdir(logStr.c_str(), 0755);
+        mkdir(m_tracePathFile.c_str(), 0755);
 #endif
       }
       if (!m_timestamp) {
