@@ -24,6 +24,7 @@ namespace shape {
       type_error,
     };
 
+    virtual rapidjson::Document& getAsJson() = 0;
     virtual const rapidjson::Document& getAsJson() const = 0;
 
     virtual void parseFile(const std::string& fname) = 0;

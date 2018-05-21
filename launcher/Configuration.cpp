@@ -19,6 +19,7 @@
 #include "ShapeDefines.h"
 #include "ShapePropertiesJson.h"
 #include "ShapePropertiesMacros.h"
+#include "rapidjson/schema.h"
 
 #include "Trace.h"
 
@@ -131,4 +132,27 @@ namespace shape {
       m_properties->encodeFile(fname);
   }
 
+  void Configuration::validate(const rapidjson::SchemaDocument& sd)
+  {
+    TRC_FUNCTION_ENTER("");
+    
+    using namespace rapidjson;
+
+    SchemaValidator validator(sd);
+    if (!m_properties->getAsJson().Accept(validator)) {
+      // Input JSON is invalid according to the schema
+      StringBuffer sb;
+      std::string schema, keyword, document;
+      validator.GetInvalidSchemaPointer().StringifyUriFragment(sb);
+      schema = sb.GetString();
+      keyword = validator.GetInvalidSchemaKeyword();
+      sb.Clear();
+      validator.GetInvalidDocumentPointer().StringifyUriFragment(sb);
+      document = sb.GetString();
+      THROW_EXC_TRC_WAR(std::logic_error, "Invalid configuration: " <<
+        PAR(schema) << PAR(keyword) << NAME_PAR(message, document));
+    }
+    m_validated = true;
+    TRC_FUNCTION_LEAVE("")
+  }
 }

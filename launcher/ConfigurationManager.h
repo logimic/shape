@@ -17,25 +17,28 @@
 #pragma once
 
 #include "Component.h"
-#include "IConfigurationManager.h"
+//#include "IConfigurationManager.h"
 #include "IConfiguration.h"
+#include "rapidjson/schema.h"
+#include <set>
 #include <map>
 #include <mutex>
 
 namespace shape {
   class Configuration;
 
-  class ConfigurationManager : public shape::IConfigurationManager
+  class ConfigurationManager
   {
   public:
 
     ConfigurationManager();
     virtual ~ConfigurationManager();
 
-    IConfiguration* createConfiguration(const std::string& componentName, const std::string& instanceName) override;
-    IConfiguration* getConfiguration(const std::string& componentName, const std::string& instanceName) override;
-    std::vector<shape::IConfiguration*> listConfigurations(const std::string& componentName) override;
+    IConfiguration* createConfiguration(const std::string& componentName, const std::string& instanceName);
+    IConfiguration* getConfiguration(const std::string& componentName, const std::string& instanceName);
+    std::vector<shape::IConfiguration*> listConfigurations(const std::string& componentName);
 
+    void loadConfigurationSchemes();
     void loadExistingConfigurations();
     void setCfgDir(const std::string & cfgDir) { m_configurationDir = cfgDir; }
     void registerComponent(shape::Component* component);
@@ -45,8 +48,9 @@ namespace shape {
     void remove(Configuration* cfg);
 
   private:
-    std::vector<std::string> getConfigFiles();
-    
+    std::set<std::string> getConfigFiles(const std::string& dir) const;
+
+
     struct ComponentCfg
     {
       shape::Component* m_component = nullptr;
@@ -56,6 +60,8 @@ namespace shape {
 
     std::mutex m_mtx;
     std::string m_configurationDir;
+
+    std::map<std::string, rapidjson::SchemaDocument> m_validatorMap;
 
   };
 }

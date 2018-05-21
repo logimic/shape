@@ -17,6 +17,7 @@
 #pragma once
 
 #include "IConfiguration.h"
+#include "rapidjson/schema.h"
 #include <memory>
 
 namespace shape {
@@ -34,6 +35,7 @@ namespace shape {
     virtual ~Configuration();
     const std::string& getFilename() const { return m_filename; }
     bool equals(const IConfiguration& other) const { return other.getId() == m_id; }
+    void validate(const rapidjson::SchemaDocument& sd);
 
   protected:
     friend class ConfigurationManager;
@@ -49,6 +51,7 @@ namespace shape {
     std::shared_ptr<Properties> m_properties;
     std::string m_filename;
     ConfigurationManager* m_cmgr = nullptr;
+    bool m_validated = false;
   private:
     Configuration();
   };

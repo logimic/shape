@@ -36,6 +36,11 @@ namespace shape {
       return *this;
     }
 
+    rapidjson::Document& getAsJson() override
+    {
+      return m_props;
+    }
+
     const rapidjson::Document& getAsJson() const override
     {
       return m_props;

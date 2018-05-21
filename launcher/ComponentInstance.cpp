@@ -84,7 +84,7 @@ namespace shape
   {
     TRC_FUNCTION_ENTER(PAR(instanceName));
 
-    m_properties = std::move(props);
+    m_properties = props;
 
     //create instance from ComponentMeta
     ObjectTypeInfo* objectTypeInfo(nullptr);
