@@ -29,6 +29,13 @@
       "startlevel": -2
     },
     {
+      "name": "shape::ConfigurationService",
+      "libraryPath": "",
+      "libraryName": "",
+      "enabled": true,
+      "startlevel": -2
+    },
+    {
       "name": "shape::Example1_Thread",
       "libraryPath": "",
       "libraryName": "Example1_Thread",

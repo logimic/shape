@@ -498,6 +498,7 @@ namespace shape
       TRC_INFORMATION(PAR(m_deploymentDir));
 
       m_configurationMgr.setCfgDir(m_configurationDir);
+      m_configurationMgr.loadConfigurationSchemes();
       m_configurationMgr.loadExistingConfigurations();
 
       std::vector<std::unique_ptr<Properties>> compVect;

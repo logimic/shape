@@ -45,14 +45,14 @@ namespace shape {
   void LauncherService::activate(const Properties *props)
   {
     TRC_FUNCTION_ENTER("");
-    TRC_INFORMATION("\n******************************\n" << "ComponentLauncher::activate()\n" << "******************************");
+    TRC_INFORMATION("\n******************************\n" << "LauncherService::activate()\n" << "******************************");
     TRC_FUNCTION_LEAVE("")
   }
 
   void LauncherService::deactivate()
   {
     TRC_FUNCTION_ENTER("");
-    TRC_INFORMATION("*\n*****************************\n" << "ComponentLauncher::deactivate()\n" << "******************************");
+    TRC_INFORMATION("*\n*****************************\n" << "LauncherService::deactivate()\n" << "******************************");
     TRC_FUNCTION_LEAVE("")
   }
 

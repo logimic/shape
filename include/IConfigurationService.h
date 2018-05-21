@@ -20,19 +20,19 @@
 #include "ShapeDefines.h"
 #include <string>
 
-#ifdef configurationManager_EXPORTS
-#define CONFIGURATIONMANAGER_DECLSPEC SHAPE_ABI_EXPORT
+#ifdef configurationService_EXPORTS
+#define CONFIGURATIONSERVICE_DECLSPEC SHAPE_ABI_EXPORT
 #else
-#define CONFIGURATIONMANAGER_DECLSPEC SHAPE_ABI_IMPORT
+#define CONFIGURATIONSERVICE_DECLSPEC SHAPE_ABI_IMPORT
 #endif
 
 namespace shape {
-  class CONFIGURATIONMANAGER_DECLSPEC IConfigurationManager
+  class CONFIGURATIONSERVICE_DECLSPEC IConfigurationService
   {
   public:
     virtual IConfiguration* createConfiguration(const std::string& componentName, const std::string& instanceName) = 0;
     virtual IConfiguration* getConfiguration(const std::string& componentName, const std::string& instanceName) = 0;
     virtual std::vector<shape::IConfiguration*> listConfigurations(const std::string& componentName) = 0;
-    virtual ~IConfigurationManager() {}
+    virtual ~IConfigurationService() {}
   };
 }

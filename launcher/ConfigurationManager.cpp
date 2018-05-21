@@ -38,13 +38,13 @@ namespace shape
   ConfigurationManager::ConfigurationManager()
   {
     TRC_FUNCTION_ENTER("");
-    TRC_FUNCTION_LEAVE("")
+    TRC_FUNCTION_LEAVE("");
   }
 
   ConfigurationManager::~ConfigurationManager()
   {
     TRC_FUNCTION_ENTER("");
-    TRC_FUNCTION_LEAVE("")
+    TRC_FUNCTION_LEAVE("");
   }
 
   void ConfigurationManager::registerComponent(shape::Component* component)
@@ -193,28 +193,83 @@ namespace shape
   }
 
   //----------------------------------------------------
+  void ConfigurationManager::loadConfigurationSchemes()
+  {
+    TRC_FUNCTION_ENTER("");
+    using namespace rapidjson;
+
+    std::string schemasDir = m_configurationDir + "/jsonschema";
+    std::set<std::string> schemas;
+    try {
+      schemas = getConfigFiles(schemasDir);
+    }
+    catch (std::exception & e) {
+      CATCH_EXC_TRC_WAR(std::exception, e, "Cannot get cfg schemas fromm: " << PAR(schemasDir));
+    }
+
+    for (const auto & schemaFile : schemas) {
+      try {
+        Document sd;
+
+        std::ifstream ifs(schemaFile);
+        if (!ifs.is_open()) {
+          THROW_EXC_TRC_WAR(std::logic_error, "Cannot open: " << PAR(schemaFile));
+        }
+
+        rapidjson::IStreamWrapper isw(ifs);
+        sd.ParseStream(isw);
+
+        if (sd.HasParseError()) {
+          THROW_EXC_TRC_WAR(std::logic_error, "Json parse error: " << NAME_PAR(emsg, sd.GetParseError()) <<
+            NAME_PAR(eoffset, sd.GetErrorOffset()));
+        }
+
+        Value *v = Pointer("/properties/component/enum/0").Get(sd);
+        if (v && v->IsString()) {
+          SchemaDocument schemaDoc(sd);
+          m_validatorMap.insert(std::make_pair(v->GetString(), std::move(schemaDoc)));
+        }
+        else {
+          THROW_EXC_TRC_WAR(std::logic_error, "JsonSchema error: " << PAR(schemaFile) << "missing: /properties/component/enum/0");
+        }
+      }
+      catch (std::exception & e) {
+        CATCH_EXC_TRC_WAR(std::exception, e, "Cannot create validator from: " << PAR(schemaFile));
+      }
+    }
+
+    TRC_FUNCTION_LEAVE("");
+  }
+
+  //----------------------------------------------------
   void ConfigurationManager::loadExistingConfigurations()
   {
     TRC_FUNCTION_ENTER("");
 
-    vector<string> files = getConfigFiles();
-
+    std::set<std::string> files = getConfigFiles(m_configurationDir);
     for (auto it = files.begin(); it != files.end(); it++) {
 
       try {
         TRC_DEBUG("Checking file: " << NAME_PAR(fname, *it));
         shared_ptr<Configuration> shpc(shape_new Configuration(*it, this));
+        const std::string& cname = shpc->getComponentName();
 
-        auto found = m_componentConfigs[shpc->getComponentName()].m_configs.find(shpc->getId());
-        if (found != m_componentConfigs[shpc->getComponentName()].m_configs.end()) {
+        auto validatorIt = m_validatorMap.find(cname);
+        if (validatorIt != m_validatorMap.end()) {
+          //found validator
+          shpc->validate(validatorIt->second);
+        }
+
+        auto found = m_componentConfigs[cname].m_configs.find(shpc->getId());
+        if (found != m_componentConfigs[cname].m_configs.end()) {
           THROW_EXC_TRC_WAR(std::logic_error, "Cannot insert probably duplicit configuration id: " <<
             NAME_PAR(id, shpc->getId()) << NAME_PAR(file, *it));
         }
-        m_componentConfigs[shpc->getComponentName()].m_configs[shpc->getId()] = shpc;
+        m_componentConfigs[cname].m_configs[shpc->getId()] = shpc;
 
       }
       catch (std::exception & e) {
-        std::cerr << "Cannot parse: " << NAME_PAR(fname, *it) << std::endl;
+        std::cerr << "Cannot process: " << NAME_PAR(fname, *it) << std::endl;
         CATCH_EXC_TRC_WAR(std::exception, e, "");
       }
     }
@@ -223,51 +278,51 @@ namespace shape
   }
 
 #ifdef SHAPE_PLATFORM_WINDOWS
-  vector<string> ConfigurationManager::getConfigFiles()
+  std::set<std::string> ConfigurationManager::getConfigFiles(const std::string& dir) const
   {
     WIN32_FIND_DATA fid;
     HANDLE found = INVALID_HANDLE_VALUE;
 
-    vector<string> fileVect;
-    string sdirect(m_configurationDir);
+    std::set<std::string>  fileSet;
+    string sdirect(dir);
     sdirect.append("/*.json");
 
     found = FindFirstFile(sdirect.c_str(), &fid);
 
     if (INVALID_HANDLE_VALUE == found) {
-      THROW_EXC_TRC_WAR(std::logic_error, "Configuration directory does not exist: " << PAR(m_configurationDir));
+      THROW_EXC_TRC_WAR(std::logic_error, "Directory does not exist: " << PAR(dir));
     }
 
     do {
       if (fid.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
         continue; //skip a directory
-      string fil(m_configurationDir);
+      string fil(dir);
       fil.append("/");
       fil.append(fid.cFileName);
-      fileVect.push_back(fil);
+      fileSet.insert(fil);
     } while (FindNextFile(found, &fid) != 0);
 
     FindClose(found);
-    return fileVect;
+    return fileSet;
   }
 
 #else
-  vector<string> ConfigurationManager::getConfigFiles()
+  std::set<std::string> ConfigurationManager::getConfigFiles(const std::string& dir) const
   {
-    vector<string> fileVect;
+    std::set<std::string> fileSet;
 
     DIR *dir;
     class dirent *ent;
     class stat st;
 
-    dir = opendir(m_configurationDir.c_str());
+    dir = opendir(dir.c_str());
     if (dir == nullptr) {
-      THROW_EXC_TRC_WAR(std::logic_error, "Configuration directory does not exist: " << PAR(m_configurationDir));
+      THROW_EXC_TRC_WAR(std::logic_error, "Directory does not exist: " << PAR(dir));
     }
     //TODO exeption if dir doesn't exists
     while ((ent = readdir(dir)) != NULL) {
       const string file_name = ent->d_name;
-      const string full_file_name(m_configurationDir + "/" + file_name);
+      const string full_file_name(dir + "/" + file_name);
 
       if (file_name[0] == '.')
         continue;
@@ -280,12 +335,12 @@ namespace shape
       if (is_directory)
         continue;
 
-      fileVect.push_back(full_file_name);
+      fileSet.insert(full_file_name);
     }
     closedir(dir);
 
 
-    return fileVect;
+    return fileSet;
   }
 
 #endif
