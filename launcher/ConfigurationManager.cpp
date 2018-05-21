@@ -141,7 +141,22 @@ namespace shape
         THROW_EXC_TRC_WAR(std::logic_error, "Component is nullptr: " << NAME_PAR(componentName, cfg->getComponentName()));
       }
       else {
-        componentCfg.m_component->updateInstance(cfg->getId(), cfg->getProperties());
+        const std::string& cname = cfg->getComponentName();
+
+        auto validatorIt = m_validatorMap.find(cname);
+        if (validatorIt != m_validatorMap.end()) {
+          //found validator
+          cfg->validate(validatorIt->second);
+          if (cfg->isValidated()) {
+            componentCfg.m_component->updateInstance(cfg->getId(), cfg->getProperties());
+          }
+          else {
+            THROW_EXC_TRC_WAR(std::logic_error, "Configuration invalid according JSON schema: " << NAME_PAR(componentName, cfg->getComponentName()));
+          }
+        }
+        else {
+          THROW_EXC_TRC_WAR(std::logic_error, "Missing JSON schema for validation: " << NAME_PAR(componentName, cfg->getComponentName()));
+        }
       }
     }
     TRC_FUNCTION_LEAVE("");

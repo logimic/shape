@@ -138,6 +138,7 @@ namespace shape {
     
     using namespace rapidjson;
 
+    m_validated = false;
     SchemaValidator validator(sd);
     if (!m_properties->getAsJson().Accept(validator)) {
       // Input JSON is invalid according to the schema

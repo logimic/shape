@@ -36,6 +36,7 @@ namespace shape {
     const std::string& getFilename() const { return m_filename; }
     bool equals(const IConfiguration& other) const { return other.getId() == m_id; }
     void validate(const rapidjson::SchemaDocument& sd);
+    bool isValidated() { return m_validated; }
 
   protected:
     friend class ConfigurationManager;
