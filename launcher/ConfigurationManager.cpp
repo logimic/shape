@@ -322,7 +322,7 @@ namespace shape
   }
 
 #else
-  std::set<std::string> ConfigurationManager::getConfigFiles(const std::string& dir) const
+  std::set<std::string> ConfigurationManager::getConfigFiles(const std::string& dirStr) const
   {
     std::set<std::string> fileSet;
 
@@ -330,14 +330,14 @@ namespace shape
     class dirent *ent;
     class stat st;
 
-    dir = opendir(dir.c_str());
+    dir = opendir(dirStr.c_str());
     if (dir == nullptr) {
-      THROW_EXC_TRC_WAR(std::logic_error, "Directory does not exist: " << PAR(dir));
+      THROW_EXC_TRC_WAR(std::logic_error, "Directory does not exist: " << PAR(dirStr));
     }
     //TODO exeption if dir doesn't exists
     while ((ent = readdir(dir)) != NULL) {
       const string file_name = ent->d_name;
-      const string full_file_name(dir + "/" + file_name);
+      const string full_file_name(dirStr + "/" + file_name);
 
       if (file_name[0] == '.')
         continue;
