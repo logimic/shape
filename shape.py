@@ -219,7 +219,7 @@ def generateComponent(name):
             f.close()     
 
 # Build project
-def build(generator):
+def build(generator, config):
 
     dirname = os.path.basename(os.getcwd())
 
@@ -242,7 +242,11 @@ def build(generator):
         print("command: " + command)  
         call(command) 
 
-        call("cmake --build " + buildDir) 
+        cfg = ""
+        if config == "Release":
+            cfg = " --target ALL_BUILD --config Release"
+
+        call("cmake --build " + buildDir + cfg) 
 
     else: 
         print ("I am building project...")          
@@ -271,7 +275,11 @@ def build(generator):
 
         call(command)    
 
-        call("cmake --build " + buildDir) 
+        cfg = ""
+        if config == "Release":
+            cfg = " --target ALL_BUILD --config Release"       
+
+        call("cmake --build " + buildDir + cfg) 
 
 
 # Run project
@@ -321,9 +329,14 @@ def main(argv):
                 run()  
         elif cmd == "--build":
             if total > 2:                
-                build(sys.argv[2])  
+                build(sys.argv[2], "Debug")  
             else:                               
-                build("default")
+                build("default","Debug")
+        elif cmd == "--buildR":
+            if total > 2:                
+                build(sys.argv[2], "Release")  
+            else:                               
+                build("default","Release")                
         elif cmd == "--help":
             print ("\n--- SHAPE help ---")
             print ("\npy shape.py [command] [options]\n")
