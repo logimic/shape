@@ -38,6 +38,7 @@ int shapeInit(int argc, char** argv)
     return -1;
   }
 
+  return retval;
 }
 
 void shapeRun()

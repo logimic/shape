@@ -16,7 +16,6 @@
 
 #pragma once
 
-#include "TraceMacros.h"
 #include "ITraceService.h"
 
 #include <map>

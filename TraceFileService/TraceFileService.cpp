@@ -83,11 +83,15 @@ namespace shape {
         {
           resetFile();
         }
-        if (m_formatService)
+        if (m_formatService) {
           m_file << m_formatService->format(level, channel, moduleName, sourceFile, sourceLine, funcName, msg);
-        else
+          m_file.flush();
+        }
+        else {
           //TODO better default format
           m_file << (int)level << ':' << channel << " " << moduleName << msg;
+          m_file.flush();
+        }
       }
     }
 
