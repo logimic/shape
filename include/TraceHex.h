@@ -33,6 +33,7 @@ namespace shape {
 
     TracerMemHex(const void* buf, long len, char separator)
     {
+      if (len <= 0) return;
       m_osbyte.setf(std::ios::hex, std::ios::basefield);
       m_osbyte.fill('0');
       long i = 0;
@@ -62,6 +63,7 @@ namespace shape {
     TracerMemHexChar(const TracerMemHexChar& t) = delete;
 
     TracerMemHexChar(const void* buf, const long len, char separator) {
+      if (len <= 0) return;
       m_osbyte.setf(std::ios::hex, std::ios::basefield);
       m_osbyte.fill('0');
       long i = 0;
