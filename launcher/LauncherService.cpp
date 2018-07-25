@@ -65,7 +65,9 @@ namespace shape {
     TRC_FUNCTION_ENTER(PAR(iface));
     shape::Tracer::get().addTracerService(iface);
     shape::Tracer::get().resetBuffered();
-    shape::Tracer::get().writeBuffer();
+    if (shape::Tracer::get().isValid(0, 0)) {
+      shape::Tracer::get().writeBuffer();
+    }
     TRC_FUNCTION_LEAVE("")
   }
 
