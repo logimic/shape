@@ -213,13 +213,14 @@ namespace shape
     TRC_FUNCTION_ENTER("");
     using namespace rapidjson;
 
-    std::string schemasDir = m_configurationDir + "/jsonschema";
+    std::string schemasDir = m_configurationDir + "/cfgSchemas";
+    TRC_DEBUG("Loading configuration schemas from: " << PAR(schemasDir))
     std::set<std::string> schemas;
     try {
       schemas = getConfigFiles(schemasDir);
     }
     catch (std::exception & e) {
-      CATCH_EXC_TRC_WAR(std::exception, e, "Cannot get cfg schemas fromm: " << PAR(schemasDir));
+      CATCH_EXC_TRC_WAR(std::exception, e, "Cannot get cfg schemas from: " << PAR(schemasDir));
     }
 
     for (const auto & schemaFile : schemas) {
