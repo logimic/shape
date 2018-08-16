@@ -27,8 +27,8 @@
 extern "C" {
   const shape::ComponentMeta& get_component_shape__TraceFormatService(unsigned long* compiler, unsigned long* typehash);
   const shape::ComponentMeta& get_component_shape__TraceFileService(unsigned long* compiler, unsigned long* typehash);
-  const shape::ComponentMeta& get_component_shape__CommandService(unsigned long* compiler, unsigned long* typehash);
   const shape::ComponentMeta& get_component_shape__LauncherService(unsigned long* compiler, unsigned long* typehash);
+  const shape::ComponentMeta& get_component_shape__ConfigurationService(unsigned long* compiler, unsigned long* typehash);
 }
 
 void staticInit()
@@ -42,8 +42,8 @@ void staticInit()
   // get components
   shape::ComponentMap::get().setComponent(&get_component_shape__TraceFormatService(&compiler, &hashcode));
   shape::ComponentMap::get().setComponent(&get_component_shape__TraceFileService(&compiler, &hashcode));
-  shape::ComponentMap::get().setComponent(&get_component_shape__CommandService(&compiler, &hashcode));
   shape::ComponentMap::get().setComponent(&get_component_shape__LauncherService(&compiler, &hashcode));
+  const shape::ComponentMeta& get_component_shape__ConfigurationService(unsigned long* compiler, unsigned long* typehash);
 }
 
 #else

@@ -48,6 +48,13 @@ message(STATUS "CMAKE_C_FLAGS_DEBUG:     ${CMAKE_C_FLAGS_DEBUG}")
 include_directories(${CMAKE_BINARY_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
+#external submodules
+
+# Prevent overriding the parent project's compiler/linker
+# settings on Windows
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+add_subdirectory(external/googletest)
+
 #library build
 add_subdirectory(include)
 add_subdirectory(startup)

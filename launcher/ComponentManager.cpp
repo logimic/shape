@@ -182,12 +182,20 @@ namespace shape
     TRC_FUNCTION_LEAVE("");
   }
 
-  void ComponentManager::exit(bool wait)
+  void ComponentManager::exit(int retval)
+  {
+    TRC_FUNCTION_ENTER("");
+    exit(false, retval);
+    TRC_FUNCTION_LEAVE("");
+  }
+
+  void ComponentManager::exit(bool wait, int retval)
   {
     TRC_FUNCTION_ENTER("");
     {
       lock_guard<mutex> lock(m_exitMtx);
       m_exit = true;
+      m_exitRetval = retval;
     }
     m_exitCond.notify_all();
 
@@ -554,7 +562,7 @@ namespace shape
     TRC_FUNCTION_LEAVE("");
   }
 
-  void ComponentManager::run()
+  int ComponentManager::run()
   {
     try {
       m_myThreadId = this_thread::get_id();
@@ -587,6 +595,7 @@ namespace shape
       TRC_WARNING("Stopped: caught exception: " << "Unknown exception");
       cerr << "Stopped: caught exception: " << "Unknown exception" << endl;
     }
+    return m_exitRetval;
   }
 
 }

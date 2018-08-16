@@ -54,6 +54,7 @@ namespace shape
     std::string componentUnload(int id) override;
 
     void exit() override;
+    void exit(int retval) override;
     void exit(bool wait) override;
     bool isExiting() const override;
     void upToRunning() override;

@@ -37,7 +37,7 @@ namespace shape
     static ComponentManager& getInst();
     virtual ~ComponentManager();
     int init(const std::vector<std::string>& commandLine, PropertiesJson* props = nullptr);
-    void run();
+    int run();
 
     const std::vector<std::string>& getCommandLine() const { return m_commandLine; }
     const std::string& getDeploymentDir() const { return m_deploymentDir; }
@@ -58,7 +58,8 @@ namespace shape
     virtual std::string componentUnload(int id);
 
     virtual void exit();
-    virtual void exit(bool wait);
+    virtual void exit(int retval);
+    virtual void exit(bool wait, int retval = 0);
     virtual bool isExiting() const;
 
     virtual void upToRunning();
@@ -94,6 +95,7 @@ namespace shape
     mutable std::mutex m_exitMtx;
     std::condition_variable m_exitCond;
     bool m_exit = false;
+    bool m_exitRetval = 0;
     bool m_exitComplete = false;
 
     std::mutex m_runningMutex;

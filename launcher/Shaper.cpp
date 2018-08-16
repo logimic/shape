@@ -17,11 +17,14 @@
 #include "Shaper.h"
 #include "SignalHandler.h"
 #include "ComponentManager.h"
+#include "StaticComponents.h"
 #include <iostream>
 #include <vector>
 
 int shapeInit(int argc, char** argv)
 {
+  staticInit();
+
   int retval = 0;
   retval = shape::initSignals();
   if (retval != 0) {
@@ -41,9 +44,9 @@ int shapeInit(int argc, char** argv)
   return retval;
 }
 
-void shapeRun()
+int shapeRun()
 {
-  shape::ComponentManager::getInst().run();
+  return shape::ComponentManager::getInst().run();
 }
 
 void shapeReady()

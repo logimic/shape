@@ -48,6 +48,7 @@ namespace shape {
 
     virtual void upToRunning() = 0;
     virtual void exit() = 0;
+    virtual void exit(int retval) = 0;
     virtual void exit(bool wait) = 0;
     virtual bool isExiting() const = 0;
     virtual ~ILaunchService() {}

@@ -19,5 +19,5 @@
 #include <string>
 
 int shapeInit(int argc, char** argv);
-void shapeRun();
+int shapeRun();
 void shapeReady();

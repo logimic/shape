@@ -146,14 +146,22 @@ namespace shape {
   {
     return ComponentManager::getInst().exit();
   }
+  
+  void LauncherService::exit(int retval)
+  {
+    return ComponentManager::getInst().exit();
+  }
+
   void LauncherService::exit(bool wait)
   {
     return ComponentManager::getInst().exit(wait);
   }
+  
   bool LauncherService::isExiting() const
   {
     return ComponentManager::getInst().isExiting();
   }
+  
   void LauncherService::upToRunning()
   {
     return ComponentManager::getInst().upToRunning();
