@@ -185,7 +185,7 @@ namespace shape
   void ComponentManager::exit(int retval)
   {
     TRC_FUNCTION_ENTER("");
-    exit(false, retval);
+    exit(true, retval);
     TRC_FUNCTION_LEAVE("");
   }
 
