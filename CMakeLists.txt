@@ -51,9 +51,9 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 #external submodules
 
 # Build google test as shared library
-add_definitions(-DBUILD_SHARED_LIBS)
+set(BUILD_SHARED_LIBS true)
+add_definitions(-DBUILD_SHARED_LIBS=1)
 # Prevent overriding the parent project's compiler/linker settings on Windows
-add_definitions(-DBUILD_SHARED_LIBS)
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 add_subdirectory(external/googletest)
 

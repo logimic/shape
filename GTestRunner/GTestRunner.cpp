@@ -181,4 +181,10 @@ namespace shape {
     shape::Tracer::get().removeTracerService(iface);
   }
 
+	TEST(Case1, Test1) {
+	bool var = true;
+	EXPECT_TRUE(true == var);
+	}
+
+
 }

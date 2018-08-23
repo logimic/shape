@@ -20,6 +20,8 @@ include_directories(${GoogleTest_INCLUDE_DIR})
 
 link_directories(${CMAKE_BINARY_DIR}/lib)
 
+add_definitions(-DGTEST_LINKED_AS_SHARED_LIBRARY=1)
+
 if(SHAPE_STATIC_LIBS)
     add_library(${PROJECT_NAME} STATIC ${_HDRFILES} ${_SRCFILES})
 else()
