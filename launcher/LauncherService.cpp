@@ -149,7 +149,7 @@ namespace shape {
   
   void LauncherService::exit(int retval)
   {
-    return ComponentManager::getInst().exit();
+    return ComponentManager::getInst().exit(retval);
   }
 
   void LauncherService::exit(bool wait)

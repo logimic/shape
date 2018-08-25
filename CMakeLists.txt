@@ -64,7 +64,8 @@ add_subdirectory(launcher)
 add_subdirectory(TraceFormatService)
 add_subdirectory(TraceFileService)
 add_subdirectory(ComponentTemplate)
-add_subdirectory(GTestRunner)
+#add_subdirectory(GTestRunner)
+add_subdirectory(GTestStaticRunner)
 
 add_subdirectory(examples/Example1_Thread)
 
