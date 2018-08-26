@@ -48,15 +48,6 @@ message(STATUS "CMAKE_C_FLAGS_DEBUG:     ${CMAKE_C_FLAGS_DEBUG}")
 include_directories(${CMAKE_BINARY_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
-#external submodules
-
-# Build google test as shared library
-# set(BUILD_SHARED_LIBS true)
-# add_definitions(-DBUILD_SHARED_LIBS=1)
-# Prevent overriding the parent project's compiler/linker settings on Windows
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-add_subdirectory(external/googletest)
-
 #library build
 add_subdirectory(include)
 add_subdirectory(startup)
@@ -64,10 +55,20 @@ add_subdirectory(launcher)
 add_subdirectory(TraceFormatService)
 add_subdirectory(TraceFileService)
 add_subdirectory(ComponentTemplate)
-#add_subdirectory(GTestRunner)
-add_subdirectory(GTestStaticRunner)
 
 add_subdirectory(examples/Example1_Thread)
+
+if(${BUILD_TESTING})
+	#external submodules
+	# Build google test as shared library
+	#set(BUILD_SHARED_LIBS true)
+	#add_definitions(-DBUILD_SHARED_LIBS=1)
+	# Prevent overriding the parent project's compiler/linker settings on Windows
+	set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+	add_subdirectory(external/googletest)
+	#add_subdirectory(GTestRunner)
+	add_subdirectory(GTestStaticRunner)
+endif()
 
 # Configure config file.
 # This file specifies actions performed and variables exported when using find_package on this project.
