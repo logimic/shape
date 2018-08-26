@@ -13,7 +13,7 @@ mkdir -p ${builddir}
 
 #launch cmake to generate build environment
 pushd ${builddir}
-cmake -G "Unix Makefiles" ${currentdir} -DCMAKE_BUILD_TYPE=Debug
+cmake -G "Unix Makefiles" -DBUILD_TESTING:BOOL=true -DCMAKE_BUILD_TYPE=Debug ${currentdir}
 popd
 
 #build from generated build environment
