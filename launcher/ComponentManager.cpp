@@ -590,10 +590,12 @@ namespace shape
     catch (exception &e) {
       CATCH_EXC_TRC_WAR(std::exception, e, "Stopped");
       cerr << "Stopped: caught exception: " << e.what() << endl;
+      m_exitRetval = -1;
     }
     catch (...) {
       TRC_WARNING("Stopped: caught exception: " << "Unknown exception");
       cerr << "Stopped: caught exception: " << "Unknown exception" << endl;
+      m_exitRetval = -1;
     }
     return m_exitRetval;
   }
