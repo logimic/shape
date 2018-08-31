@@ -15,6 +15,7 @@
  */
 
 #include "GTestStaticRunner.h"
+#include "Args.h"
 #include "ILaunchService.h"
 #include "Trace.h"
 #include <chrono>
@@ -62,44 +63,6 @@ namespace shape {
 
   }
   
-  class Args
-  {
-  public:
-    Args() = delete;
-    Args(const std::vector<std::string>& args)
-    {
-      m_argc = args.size();
-      if (m_argc > 0)
-      {
-        m_argv = shape_new char *[m_argc + 1];
-        int n = 0;
-        for (; n < m_argc; n++)
-        {
-          m_argv[n] = shape_new char[args[n].size() + 1];
-          strcpy(m_argv[n], args[n].c_str());
-        }
-        m_argv[n] = nullptr; //must be ended with null
-      }
-    }
-    ~Args()
-    {
-      if (m_argc > 0)
-      {
-        int n = 0;
-        for (int n = 0; n < m_argc; n++)
-          delete[] m_argv[n];
-        delete[] m_argv;
-      }
-    }
-
-    int* argc() { return &m_argc; }
-    char ** argv() { return m_argv; }
-
-  private:
-    int m_argc = 0;
-    char** m_argv = nullptr;
-  };
-
   void GTestStaticRunner::runThread()
   {
     TRC_FUNCTION_ENTER("");
