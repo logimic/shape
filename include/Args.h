@@ -18,28 +18,41 @@
 
 #include "ShapeDefines.h"
 #include <vector>
+#include <sstream>
 #include <string.h>
+#include <iterator>
 
 namespace shape {
   class Args
   {
   public:
     Args() = delete;
+    
+    Args(int argc, char** argv)
+    {
+      for (int ia = 0; ia < argc; ia++) {
+        m_argsVect.push_back(argv[ia]);
+      }
+      initArgs();
+    }
+
+    Args(const std::string args)
+    {
+      std::stringstream sstr(args);
+
+      std::istream_iterator<std::string> it(sstr);
+      std::istream_iterator<std::string> end;
+      m_argsVect = std::vector<std::string>(it, end);
+
+      initArgs();
+    }
+    
     Args(const std::vector<std::string>& args)
     {
-      m_argc = args.size();
-      if (m_argc > 0)
-      {
-        m_argv = shape_new char *[m_argc + 1];
-        int n = 0;
-        for (; n < m_argc; n++)
-        {
-          m_argv[n] = shape_new char[args[n].size() + 1];
-          strcpy(m_argv[n], args[n].c_str());
-        }
-        m_argv[n] = nullptr; //must be ended with null
-      }
+      m_argsVect = args;
+      initArgs();
     }
+    
     ~Args()
     {
       if (m_argc > 0)
@@ -53,9 +66,27 @@ namespace shape {
 
     int* argc() { return &m_argc; }
     char ** argv() { return m_argv; }
+    const std::vector<std::string>& gestArgs() { return m_argsVect; }
 
   private:
+    void initArgs()
+    {
+      m_argc = m_argsVect.size();
+      if (m_argc > 0)
+      {
+        m_argv = shape_new char *[m_argc + 1];
+        int n = 0;
+        for (; n < m_argc; n++)
+        {
+          m_argv[n] = shape_new char[m_argsVect[n].size() + 1];
+          strcpy(m_argv[n], m_argsVect[n].c_str());
+        }
+        m_argv[n] = nullptr; //must be ended with null
+      }
+    }
+    
     int m_argc = 0;
     char** m_argv = nullptr;
+    std::vector<std::string> m_argsVect;
   };
 }
