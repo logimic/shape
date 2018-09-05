@@ -1,20 +1,37 @@
 
-SET(GOOGLETEST_SEARCH_PATH
+SET(GTEST_SEARCH_PATH
     "${GTEST_SOURCE_DIR}"
     "${CMAKE_CURRENT_LIST_DIR}/../external/googletest/googletest")
 
-FIND_PATH(GOOGLETEST_SOURCE_DIR
-    NAMES CMakeLists.txt src/gtest_main.cc
-    PATHS ${GOOGLETEST_SEARCH_PATH})
+SET(GMOCK_SEARCH_PATH
+    "${GMOCK_SOURCE_DIR}"
+    "${CMAKE_CURRENT_LIST_DIR}/../external/googletest/googlemock")
 
+FIND_PATH(GTEST_SOURCE_DIR
+    NAMES CMakeLists.txt src/gtest_all.cc
+    PATHS ${GTEST_SEARCH_PATH})
 
-FIND_PATH(GoogleTest_INCLUDE_DIR
+FIND_PATH(GMOCK_SOURCE_DIR
+    NAMES CMakeLists.txt src/gmock_all.cc
+    PATHS ${GMOCK_SEARCH_PATH})
+
+FIND_PATH(GTEST_INCLUDE_DIR
     NAMES gtest/gtest.h
     PATH_SUFFIXES include
-    HINTS ${GOOGLETEST_SOURCE_DIR}
-    PATHS ${GOOGLETEST_SEARCH_PATH})
+    HINTS ${GTEST_SOURCE_DIR}
+    PATHS ${GTEST_SEARCH_PATH})
 
-set(GoogleTest_LIBRARIES optimized gtest debug gtestd)
+FIND_PATH(GMOCK_INCLUDE_DIR
+    NAMES gmock/gmock.h
+    PATH_SUFFIXES include
+    HINTS ${GMOCK_SOURCE_DIR}
+    PATHS ${GMOCK_SEARCH_PATH})
+
+set(GoogleTest_INCLUDE_DIR
+    ${GTEST_INCLUDE_DIR}
+    ${GMOCK_INCLUDE_DIR})
+
+set(GoogleTest_LIBRARIES optimized gtest optimized gmock debug gtestd debug gmockd)
 
 INCLUDE(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(GoogleTest DEFAULT_MSG

@@ -22,6 +22,7 @@
 #include <iostream>
 #include <set>
 
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace shape {
@@ -68,8 +69,11 @@ namespace shape {
     TRC_FUNCTION_ENTER("");
 
     Args args(m_iLaunchService->getCommandLine());
-    ::testing::InitGoogleTest(args.argc(), args.argv());
-    
+    // Since Google Mock depends on Google Test, InitGoogleMock() is
+    // also responsible for initializing Google Test.  Therefore there's
+    // no need for calling testing::InitGoogleTest() separately.
+    ::testing::InitGoogleMock(args.argc(), args.argv());
+
     int retval = RUN_ALL_TESTS();
 
     m_iLaunchService->exit(retval);

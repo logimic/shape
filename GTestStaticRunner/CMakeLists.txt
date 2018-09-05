@@ -2,6 +2,9 @@ project(GTestStaticRunner)
 
 find_package(GoogleTest REQUIRED)
 
+message(STATUS "GoogleTest_INCLUDE_DIR: ${GoogleTest_INCLUDE_DIR}")
+message(STATUS "GoogleTest_LIBRARIES: ${GoogleTest_LIBRARIES}")
+
 file(GLOB_RECURSE _HDRFILES ${CMAKE_CURRENT_SOURCE_DIR}/*.h  ${COMPONENT_HXX})
 file(GLOB_RECURSE _SRCFILES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 
