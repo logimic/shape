@@ -95,7 +95,7 @@ namespace shape
     mutable std::mutex m_exitMtx;
     std::condition_variable m_exitCond;
     bool m_exit = false;
-    bool m_exitRetval = 0;
+    int m_exitRetval = 0;
     bool m_exitComplete = false;
 
     std::mutex m_runningMutex;

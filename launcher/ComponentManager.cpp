@@ -184,14 +184,14 @@ namespace shape
 
   void ComponentManager::exit(int retval)
   {
-    TRC_FUNCTION_ENTER("");
+    TRC_FUNCTION_ENTER(PAR(retval));
     exit(false, retval);
     TRC_FUNCTION_LEAVE("");
   }
 
   void ComponentManager::exit(bool wait, int retval)
   {
-    TRC_FUNCTION_ENTER("");
+    TRC_FUNCTION_ENTER(PAR(wait) << PAR(retval));
     {
       lock_guard<mutex> lock(m_exitMtx);
       m_exit = true;
