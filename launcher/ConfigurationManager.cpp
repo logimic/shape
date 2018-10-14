@@ -326,6 +326,7 @@ namespace shape
   std::set<std::string> ConfigurationManager::getConfigFiles(const std::string& dirStr) const
   {
     std::set<std::string> fileSet;
+    std::string jsonExt = "json";
 
     DIR *dir;
     class dirent *ent;
@@ -351,7 +352,15 @@ namespace shape
       if (is_directory)
         continue;
 
-      fileSet.insert(full_file_name);
+      //keep just *.json
+      size_t i = full_file_name.rfind('.', full_file_name.length());
+      if (i != string::npos && jsonExt == full_file_name.substr(i + 1, full_file_name.length() - i)) {
+        fileSet.insert(full_file_name);
+      }
+      else {
+        continue;
+      }
+
     }
     closedir(dir);
 
