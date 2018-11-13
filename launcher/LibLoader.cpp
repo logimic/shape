@@ -17,6 +17,7 @@
 #include "LibLoader.h"
 #include "Trace.h"
 #include <algorithm>
+#include <fstream>
 
 #ifdef SHAPE_PLATFORM_POSIX
 #include <dlfcn.h>
@@ -44,31 +45,67 @@ namespace shape {
   {
   }
 
-  LibLoader::LibLoader(const std::string& libraryPath, const std::string& libraryName)
+  bool LibLoader::isOpenedLibrary()
   {
-    TRC_FUNCTION_ENTER(PAR(libraryPath) << PAR(libraryName));
+    return m_lib != nullptr;
+  }
+
+  void formatPath(std::string& pth)
+  {
+    if (!pth.empty()) {
+      std::replace(pth.begin(), pth.end(), '\\', '/');
+      if (pth.back() != '/')
+        pth.append("/");
+    }
+  }
+
+  bool LibLoader::findLibrary(const std::string& deploymentPath, const std::string& libraryPath, const std::string& libraryName)
+  {
+    TRC_FUNCTION_ENTER(PAR(deploymentPath) << PAR(libraryPath) << PAR(libraryName));
 
     // decorate library name by system specific prefix & suffix
     ostringstream o;
     o << SHL_PREFIX << libraryName << SHL_SUFFIX;
     m_libraryName = o.str();
 
-    m_libraryPath = libraryPath;
-    if (!m_libraryPath.empty()) {
-      std::replace(m_libraryPath.begin(), m_libraryPath.end(), '\\', '/');
-      if (m_libraryPath.back() != '/')
-        m_libraryPath.append("/");
+    std::string dpath = deploymentPath;
+    formatPath(dpath);
+    std::string lpath = libraryPath;
+    formatPath(lpath);
+
+    bool exists = false;
+    
+    ostringstream olpf1;
+    olpf1 << dpath << lpath;
+    m_libraryPath = olpf1.str();
+    olpf1 << m_libraryName;
+    m_libraryPathFile = olpf1.str();
+    m_triedPaths.push_back(m_libraryPathFile);
+    std::ifstream f1(m_libraryPathFile);
+    exists = f1.good();
+
+    if (!exists) {
+      if (!lpath.empty()) {
+        // try libraryPath/libraryName (legacy)
+        m_libraryPath = lpath;
+      }
+      else {
+        // try deploymentPath/libraryname (legacy)
+        m_libraryPath = dpath;
+      }
+      ostringstream olpf2;
+      olpf2 << m_libraryPath << m_libraryName;
+      m_libraryPathFile = olpf2.str();
+      m_triedPaths.push_back(m_libraryPathFile);
+      std::ifstream f2(m_libraryPathFile);
+      exists = f2.good();
     }
 
-    m_libraryPathFile = m_libraryPath + m_libraryName;
-    
-    TRC_FUNCTION_LEAVE("");
+    TRC_FUNCTION_LEAVE(PAR(exists));
+    return exists;
   }
 
-  bool LibLoader::isOpenedLibrary()
-  {
-    return m_lib != nullptr;
-  }
+
 
 #ifdef SHAPE_PLATFORM_WINDOWS
 

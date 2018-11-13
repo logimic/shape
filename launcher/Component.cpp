@@ -82,15 +82,7 @@ namespace shape {
   {
     TRC_FUNCTION_ENTER(PAR(componentName) << PAR(libraryPath) << PAR(libraryName) << PAR(deploymentDir));
     
-    if (!libraryName.empty()) {
-      // dynamic linking
-      if (libraryPath.empty()) {
-        m_libLoader = LibLoader(deploymentDir, libraryName);
-      }
-      else {
-        m_libLoader = LibLoader(libraryPath, libraryName);
-      }
-    }
+    m_libLoader.findLibrary(deploymentDir, libraryPath, libraryName);
 
     TRC_FUNCTION_LEAVE("");
   }
@@ -141,7 +133,14 @@ namespace shape {
 
         // check loader
         if (!m_libLoader.isOpenedLibrary()) {
-          THROW_EXC_TRC_WAR(std::logic_error, "Component library is not loaded: " << PAR(m_componentName));
+          std::vector<std::string> paths = m_libLoader.getTriedPaths();
+          std::ostringstream os;
+          for (const auto& p : paths) {
+            os << p << std::endl;
+          }
+          THROW_EXC_TRC_WAR(std::logic_error, "Component library is not loaded: " << PAR(m_componentName) << std::endl <<
+            "tried paths: " << os.str()
+          );
         }
           
         // check loader result

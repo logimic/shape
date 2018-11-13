@@ -17,6 +17,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace shape
 {
@@ -24,12 +25,15 @@ namespace shape
   {
   public:
     LibLoader();
-    LibLoader(const std::string& libraryPath, const std::string& libraryName);
+    //LibLoader(const std::string& libraryPath, const std::string& libraryName);
     ~LibLoader();
 
     const std::string& getLibraryPathName() const { return m_libraryPathFile; }
     
     void* getFunction(const std::string& functionName) const;
+
+    bool findLibrary(const std::string& deploymentPath, const std::string& libraryPath, const std::string& libraryName);
+    const std::vector<std::string>& getTriedPaths() const { return m_triedPaths; }
 
     void openLibrary();
     void closeLibrary();
@@ -40,6 +44,8 @@ namespace shape
     std::string m_libraryPath;
     std::string m_libraryName;
     std::string m_libraryPathFile;
+    std::vector<std::string> m_triedPaths;
+
   };
 
 }
