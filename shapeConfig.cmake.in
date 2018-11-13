@@ -50,3 +50,12 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${@PROJECT_NAME@_CMAKE_MODULE_PATH}"
 # Note:
 #   Use include_directories(${@PROJECT_NAME@_INCLUDE_DIRS}) to add include directories.
 #   Use target_link_libraries(*YOUR_TARGET* ${@PROJECT_NAME@_LIBRARIES}) to link libraries to your target.
+
+#----------------------------------------------------------------------------------------------------
+# Deployment
+set(@PROJECT_NAME@_DEPLOY "@SHAPE_DEPLOY@")
+
+if (@PROJECT_NAME@_DEPLOY STREQUAL "")
+  set(@PROJECT_NAME@_DEPLOY "${@PROJECT_NAME@_CMAKE_BINARY_DIR}/deploy")
+endif()
+

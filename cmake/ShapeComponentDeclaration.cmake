@@ -47,3 +47,31 @@ function(ConfigureShapeComponent componentName componentHeader)
 		message( SEND_ERROR "ConfigureShapeComponent(): Component ${componentName} must be declared in advance by DeclareShapeComponent()")
 	endif()
 endfunction()
+
+function(DeployShapeTarget subdir projectName)
+	set(targetdir "${shape_DEPLOY}/$<CONFIGURATION>/${subdir}")
+	set(subdirpath ${targetdir} PARENT_SCOPE)
+	message(STATUS "targetdir: " ${targetdir})
+	set(targetfile "$<TARGET_FILE:${PROJECT_NAME}>")
+	string(CONCAT comment "Copy: " "${targetfile}" " to " "${targetdir}")
+	add_custom_command(
+		TARGET ${PROJECT_NAME} POST_BUILD
+		COMMAND "${CMAKE_COMMAND}" -E make_directory "${targetdir}" 
+		COMMAND "${CMAKE_COMMAND}" -E copy "${targetfile}" "${targetdir}"
+		COMMAND "${CMAKE_COMMAND}" -E echo "${comment}"
+	)
+endfunction()
+
+function(DeployShapeComponent subdir projectName componentName)
+	DeployShapeTarget(${subdir} ${projectName})
+	string(REPLACE ":" "_" NAMESPACE_COMPONENT ${componentName})
+	set(schemafile "${CMAKE_CURRENT_SOURCE_DIR}/schema__${NAMESPACE_COMPONENT}.json")
+    if(EXISTS "${schemafile}")
+		string(CONCAT comment "Copy: " "${schemafile}" " to " "${subdirpath}")
+		add_custom_command(
+			TARGET ${PROJECT_NAME} POST_BUILD
+			COMMAND "${CMAKE_COMMAND}" -E copy "${schemafile}" "${subdirpath}"
+			COMMAND "${CMAKE_COMMAND}" -E echo "${comment}"
+		)
+    endif()
+endfunction()
