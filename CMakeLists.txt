@@ -2,6 +2,8 @@ project (shape)
 
 cmake_minimum_required(VERSION 3.0)
 
+set(PROJECT_SUBDIR ${PROJECT_NAME})
+
 set(PROJECT_CMAKE_MODULE_PATH ${PROJECT_CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
 set(${PROJECT_NAME}_CMAKE_MODULE_PATH ${PROJECT_CMAKE_MODULE_PATH})
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
@@ -48,6 +50,14 @@ message(STATUS "CMAKE_C_FLAGS_DEBUG:     ${CMAKE_C_FLAGS_DEBUG}")
 include_directories(${CMAKE_BINARY_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
+# Configure config file.
+# This file specifies actions performed and variables exported when using find_package on this project.
+# The find_package requires properly set ${PROJECT_NAME}_DIR variable to a location where the
+# configured config file persists. This variable is usually specified from the outside of CMake.
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}Config.cmake.in ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake @ONLY)
+
+include(${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake)
+
 #library build
 add_subdirectory(include)
 add_subdirectory(startup)
@@ -69,9 +79,3 @@ if(${BUILD_TESTING})
 	#add_subdirectory(GTestRunner)
 	add_subdirectory(GTestStaticRunner)
 endif()
-
-# Configure config file.
-# This file specifies actions performed and variables exported when using find_package on this project.
-# The find_package requires properly set ${PROJECT_NAME}_DIR variable to a location where the
-# configured config file persists. This variable is usually specified from the outside of CMake.
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}Config.cmake.in ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake @ONLY)
