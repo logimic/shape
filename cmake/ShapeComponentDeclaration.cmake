@@ -1,7 +1,7 @@
 function(DeclareShapeComponent componentName)
+	message(STATUS "DeclareShapeComponent(): ${componentName}")
 	string(REPLACE ":" "_" NAMESPACE_COMPONENT ${componentName})
     set(SHAPE_COMPONENT_${NAMESPACE_COMPONENT} ${componentName} PARENT_SCOPE)
-	message(STATUS "DeclareShapeComponent(): ComponentName: ${SHAPE_COMPONENT_${NAMESPACE_COMPONENT}}")
 endfunction()
 
 function(AddShapeProvidedInterface componentName interface)
