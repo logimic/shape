@@ -32,7 +32,6 @@ endif()
 
 if (WIN32)
     set (_CONFIG_DEST ${CMAKE_CURRENT_BINARY_DIR})
-
 else()
     target_link_libraries(${PROJECT_NAME} 
         dl
@@ -40,12 +39,13 @@ else()
     )
 
     set (_CONFIG_DEST $<TARGET_FILE_DIR:${PROJECT_NAME}>)
-
-    INSTALL(TARGETS ${PROJECT_NAME}
-        RUNTIME DESTINATION bin
-        LIBRARY DESTINATION lib)
-
 endif()
+
+INSTALL(TARGETS ${PROJECT_NAME}
+    RUNTIME DESTINATION "\${CMAKE_INSTALL_CONFIG_NAME}/${PROJECT_SUBDIR}/bin"
+    LIBRARY DESTINATION "\${CMAKE_INSTALL_CONFIG_NAME}/${PROJECT_SUBDIR}/bin"
+	ARCHIVE DESTINATION "\${CMAKE_INSTALL_CONFIG_NAME}/${PROJECT_SUBDIR}/lib"
+)
 
 # do the copying
 add_custom_command(
