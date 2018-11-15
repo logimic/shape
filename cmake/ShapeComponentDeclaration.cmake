@@ -51,7 +51,6 @@ endfunction()
 function(DeployShapeTarget subdir projectName)
 	set(targetdir "${shape_DEPLOY}/$<CONFIGURATION>/${subdir}")
 	set(subdirpath ${targetdir} PARENT_SCOPE)
-	message(STATUS "targetdir: " ${targetdir})
 	set(targetfile "$<TARGET_FILE:${PROJECT_NAME}>")
 	string(CONCAT comment "Copy: " "${targetfile}" " to " "${targetdir}")
 	add_custom_command(
@@ -74,4 +73,31 @@ function(DeployShapeComponent subdir projectName componentName)
 			COMMAND "${CMAKE_COMMAND}" -E echo "${comment}"
 		)
     endif()
+endfunction()
+
+function(DeployShapeConfiguration subdir cfgName)
+	set(cfgPath "${shape_DEPLOY}/$<CONFIGURATION>/${subdir}/${cfgName}")
+	
+	set(ix 2)
+	while(ix LESS ${ARGC})
+		list(GET ARGV ${ix} src)
+		MATH(EXPR ix "${ix}+1")	
+		if(NOT ix LESS ${ARGC})
+			break()
+		endif()
+
+		list(GET ARGV ${ix} dst)
+		set(dst "${cfgPath}/${dst}")
+		MATH(EXPR ix "${ix}+1")	
+
+		string(CONCAT comment "Copy: " "${src}" " to " "${dst}")
+		
+		add_custom_command(
+			TARGET ${PROJECT_NAME} POST_BUILD
+			COMMAND "${CMAKE_COMMAND}" -E copy_directory "${src}" "${dst}"
+			COMMAND "${CMAKE_COMMAND}" -E echo "${comment}"
+		)
+
+	endwhile()
+	
 endfunction()
