@@ -86,10 +86,31 @@ function(DeployShapeConfiguration cfgName)
 			DESTINATION ${dst}
 		)
 	endwhile()
+
 endfunction()
 
-# This is temporary and MSVC cmake support shall be used in next MSVC ver.
-# The file <Project>.vcxpro.user is configured only if doesn't exist - it keeps possible manual changes
+function(DeployShapeConfigurationStartUp executable cfgName)
+	set(cfgPath "\${CMAKE_INSTALL_CONFIG_NAME}/${PROJECT_INSTALL_PREFIX}/runcfg/${cfgName}")
+	
+	set(_EXE "${shape_DEPLOY}/Debug/${executable}")		
+	set(_ARGS "./configuration/config.json")
+	if(UNIX)
+	  set(_SUFFIX sh)
+	else()
+	  set(_SUFFIX bat)
+	endif()
+	set(_TMP_FILE ${CMAKE_CURRENT_BINARY_DIR}/tmp/runcfg/${cfgName}/StartUp.tmp)
+	
+	configure_file(${shape_CMAKE_MODULE_PATH}/StartUp.in ${_TMP_FILE} @ONLY)
+	install(
+		FILES "${_TMP_FILE}"
+		DESTINATION ${cfgPath}
+		RENAME StartUp.${_SUFFIX}
+	)
+endfunction()
+
+# This is temporary. MSVC cmake support shall be used in next MSVC ver.
+# The file <Project>.vcxpro.user is configured only if it doesn't exist - it keeps possible manual changes
 function(ConfigureMsvcProject executable cfgName)
     if(MSVC)
 		set(_vcxProjUserName "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.vcxproj.user")
