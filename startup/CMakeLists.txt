@@ -47,4 +47,6 @@ DeployShapeConfiguration(testStartup
 	${CMAKE_CURRENT_SOURCE_DIR}/configuration configuration
 )
 
+DeployShapeConfigurationStartUp("${PROJECT_INSTALL_PREFIX}/bin/${PROJECT_NAME}" testStartup)
+
 ConfigureMsvcProject("${PROJECT_INSTALL_PREFIX}/bin/${PROJECT_NAME}" testStartup)
