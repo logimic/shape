@@ -73,7 +73,7 @@ add_subdirectory(examples/Example1_Thread)
 if(${BUILD_TESTING})
 	#external submodules
 	# Build google test as shared library
-	#set(BUILD_SHARED_LIBS true)
+	set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 	#add_definitions(-DBUILD_SHARED_LIBS=1)
 	# Prevent overriding the parent project's compiler/linker settings on Windows
 	set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
