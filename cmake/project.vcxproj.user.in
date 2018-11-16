@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion=@VS_VER@ xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LocalDebuggerCommand>@DEBUG_EXE@</LocalDebuggerCommand>
+    <LocalDebuggerCommandArguments>@DEBUG_ARGS@</LocalDebuggerCommandArguments>
+    <LocalDebuggerWorkingDirectory>@DEBUG_WD@</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LocalDebuggerCommand>@RELEASE_EXE@</LocalDebuggerCommand>
+    <LocalDebuggerCommandArguments>@RELEASE_ARGS@</LocalDebuggerCommandArguments>
+    <LocalDebuggerWorkingDirectory>@RELEASE_WD@</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LocalDebuggerCommand>@DEBUG_EXE@</LocalDebuggerCommand>
+    <LocalDebuggerCommandArguments>@DEBUG_ARGS@</LocalDebuggerCommandArguments>
+    <LocalDebuggerWorkingDirectory>@DEBUG_WD@</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LocalDebuggerCommand>@RELEASE_EXE@</LocalDebuggerCommand>
+    <LocalDebuggerCommandArguments>@RELEASE_ARGS@</LocalDebuggerCommandArguments>
+    <LocalDebuggerWorkingDirectory>@RELEASE_WD@</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+</Project>

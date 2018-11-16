@@ -48,37 +48,28 @@ function(ConfigureShapeComponent componentName componentHeader)
 	endif()
 endfunction()
 
-function(DeployShapeTarget subdir projectName)
-	set(targetdir "${shape_DEPLOY}/$<CONFIGURATION>/${subdir}")
-	set(subdirpath ${targetdir} PARENT_SCOPE)
-	set(targetfile "$<TARGET_FILE:${PROJECT_NAME}>")
-	string(CONCAT comment "Copy: " "${targetfile}" " to " "${targetdir}")
-	add_custom_command(
-		TARGET ${PROJECT_NAME} POST_BUILD
-		COMMAND "${CMAKE_COMMAND}" -E make_directory "${targetdir}" 
-		COMMAND "${CMAKE_COMMAND}" -E copy "${targetfile}" "${targetdir}"
-		COMMAND "${CMAKE_COMMAND}" -E echo "${comment}"
+function(DeployShapeComponent componentName)
+	INSTALL(TARGETS ${componentName}
+		RUNTIME DESTINATION "\${CMAKE_INSTALL_CONFIG_NAME}/${PROJECT_INSTALL_PREFIX}/bin"
+		LIBRARY DESTINATION "\${CMAKE_INSTALL_CONFIG_NAME}/${PROJECT_INSTALL_PREFIX}/bin"
+		ARCHIVE DESTINATION "\${CMAKE_INSTALL_CONFIG_NAME}/${PROJECT_INSTALL_PREFIX}/lib"
 	)
-endfunction()
 
-function(DeployShapeComponent subdir projectName componentName)
-	DeployShapeTarget(${subdir} ${projectName})
 	string(REPLACE ":" "_" NAMESPACE_COMPONENT ${componentName})
 	set(schemafile "${CMAKE_CURRENT_SOURCE_DIR}/schema__${NAMESPACE_COMPONENT}.json")
-    if(EXISTS "${schemafile}")
-		string(CONCAT comment "Copy: " "${schemafile}" " to " "${subdirpath}")
-		add_custom_command(
-			TARGET ${PROJECT_NAME} POST_BUILD
-			COMMAND "${CMAKE_COMMAND}" -E copy "${schemafile}" "${subdirpath}"
-			COMMAND "${CMAKE_COMMAND}" -E echo "${comment}"
+	if(EXISTS "${schemafile}")
+		install(
+			FILE
+			"${schemafile}"
+			DESTINATION "\${CMAKE_INSTALL_CONFIG_NAME}/${PROJECT_INSTALL_PREFIX}/bin"
 		)
-    endif()
+		endif()
 endfunction()
 
-function(DeployShapeConfiguration subdir cfgName)
-	set(cfgPath "${shape_DEPLOY}/$<CONFIGURATION>/${subdir}/${cfgName}")
+function(DeployShapeConfiguration cfgName)
+	set(cfgPath "\${CMAKE_INSTALL_CONFIG_NAME}/${PROJECT_INSTALL_PREFIX}/runcfg/${cfgName}")
 	
-	set(ix 2)
+	set(ix 1)
 	while(ix LESS ${ARGC})
 		list(GET ARGV ${ix} src)
 		MATH(EXPR ix "${ix}+1")	
@@ -90,14 +81,42 @@ function(DeployShapeConfiguration subdir cfgName)
 		set(dst "${cfgPath}/${dst}")
 		MATH(EXPR ix "${ix}+1")	
 
-		string(CONCAT comment "Copy: " "${src}" " to " "${dst}")
-		
-		add_custom_command(
-			TARGET ${PROJECT_NAME} POST_BUILD
-			COMMAND "${CMAKE_COMMAND}" -E copy_directory "${src}" "${dst}"
-			COMMAND "${CMAKE_COMMAND}" -E echo "${comment}"
+		install(
+			DIRECTORY "${src}/"
+			DESTINATION ${dst}
 		)
-
 	endwhile()
-	
+endfunction()
+
+# This is temporary and MSVC cmake support shall be used in next MSVC ver.
+# The file <Project>.vcxpro.user is configured only if doesn't exist - it keeps possible manual changes
+function(ConfigureMsvcProject executable cfgName)
+    if(MSVC)
+		set(_vcxProjUserName "${CMAKE_CURRENT_BINARY_DIR}/${cfgName}.vcxproj.user")
+        if (NOT EXISTS ${_vcxProjUserName})
+			if(${MSVC_VERSION} EQUAL 1700)
+				set(VS_VER 11.0)
+			elseif(${MSVC_VERSION} EQUAL 1800)
+				set(VS_VER 12.0)
+			elseif(${MSVC_VERSION} EQUAL 1900)
+				set(VS_VER 14.0)
+			elseif(${MSVC_VERSION} EQUAL 1915)
+				set(VS_VER 15.0)
+			elseif(${MSVC_VERSION} EQUAL 1916)
+				set(VS_VER 15.0)
+			else()
+				message(FATAL_ERROR "Unknown/unsupported VS version: ${MSVC_VERSION}")
+			endif()
+
+			set(DEBUG_EXE "${shape_DEPLOY}/Debug/${executable}")		
+			set(RELEASE_EXE "${shape_DEPLOY}/Release/${executable}")		
+			set(DEBUG_ARGS "./configuration/config.json")		
+			set(RELEASE_ARGS "./configuration/config.json")		
+			set(DEBUG_WD "${shape_DEPLOY}/Debug/${PROJECT_INSTALL_PREFIX}/runcfg/${cfgName}")		
+			set(RELEASE_WD "${shape_DEPLOY}/Release/${PROJECT_INSTALL_PREFIX}/runcfg/${cfgName}")		
+
+			configure_file(${shape_CMAKE_MODULE_PATH}/project.vcxproj.user.in ${_vcxProjUserName} @ONLY)
+        endif()
+    endif()
+
 endfunction()

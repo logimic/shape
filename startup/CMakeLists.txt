@@ -41,16 +41,10 @@ else()
     set (_CONFIG_DEST $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 endif()
 
-INSTALL(TARGETS ${PROJECT_NAME}
-    RUNTIME DESTINATION "\${CMAKE_INSTALL_CONFIG_NAME}/${PROJECT_SUBDIR}/bin"
-    LIBRARY DESTINATION "\${CMAKE_INSTALL_CONFIG_NAME}/${PROJECT_SUBDIR}/bin"
-	ARCHIVE DESTINATION "\${CMAKE_INSTALL_CONFIG_NAME}/${PROJECT_SUBDIR}/lib"
+DeployShapeComponent(${PROJECT_NAME})
+
+DeployShapeConfiguration(testStartup
+	${CMAKE_CURRENT_SOURCE_DIR}/configuration configuration
 )
 
-# do the copying
-add_custom_command(
-    TARGET ${PROJECT_NAME}
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND}
-    ARGS -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/configuration ${_CONFIG_DEST}/configuration
-)
+ConfigureMsvcProject("${PROJECT_INSTALL_PREFIX}/bin/${PROJECT_NAME}" testStartup)
