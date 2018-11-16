@@ -21,4 +21,4 @@ else()
     add_library(${PROJECT_NAME} SHARED ${_HDRFILES} ${_SRCFILES})
 endif()
 
-DeployShapeComponent(${PROJECT_SUBDIR} ${PROJECT_NAME} ${COMPONENT})
+DeployShapeComponent(${PROJECT_NAME})

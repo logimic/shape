@@ -5,18 +5,18 @@
   "cacheDir": "cache",
   "userDir": "",
   "configurationDir": "configuration",
-  "deploymentDir": "../bin/Debug",
+  "deploymentDir": "../../..",
   "components": [
     {
       "name": "shape::TraceFormatService",
-      "libraryPath": "",
+      "libraryPath": "shape/bin",
       "libraryName": "TraceFormatService",
       "enabled": true,
       "startlevel": -4
     },
     {
       "name": "shape::TraceFileService",
-      "libraryPath": "",
+      "libraryPath": "shape/bin",
       "libraryName": "TraceFileService",
       "enabled": true,
       "startlevel": -3
@@ -31,13 +31,13 @@
     {
       "name": "shape::ConfigurationService",
       "libraryPath": "",
-      "libraryName": "",
+      "libraryName": "shape/bin",
       "enabled": true,
       "startlevel": -2
     },
     {
       "name": "shape::Example1_Thread",
-      "libraryPath": "",
+      "libraryPath": "shape/bin",
       "libraryName": "Example1_Thread",
       "enabled": true,
       "startlevel": -2

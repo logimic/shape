@@ -32,7 +32,6 @@ endif()
 
 if (WIN32)
     set (_CONFIG_DEST ${CMAKE_CURRENT_BINARY_DIR})
-
 else()
     target_link_libraries(${PROJECT_NAME} 
         dl
@@ -40,17 +39,14 @@ else()
     )
 
     set (_CONFIG_DEST $<TARGET_FILE_DIR:${PROJECT_NAME}>)
-
-    INSTALL(TARGETS ${PROJECT_NAME}
-        RUNTIME DESTINATION bin
-        LIBRARY DESTINATION lib)
-
 endif()
 
-# do the copying
-add_custom_command(
-    TARGET ${PROJECT_NAME}
-    POST_BUILD
-    COMMAND ${CMAKE_COMMAND}
-    ARGS -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/configuration ${_CONFIG_DEST}/configuration
+DeployShapeComponent(${PROJECT_NAME})
+
+DeployShapeConfiguration(testStartup
+	${CMAKE_CURRENT_SOURCE_DIR}/configuration configuration
 )
+
+DeployShapeConfigurationStartUp("${PROJECT_INSTALL_PREFIX}/bin/${PROJECT_NAME}" testStartup)
+
+ConfigureMsvcProject("${PROJECT_INSTALL_PREFIX}/bin/${PROJECT_NAME}" testStartup)

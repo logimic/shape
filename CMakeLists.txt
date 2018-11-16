@@ -2,8 +2,6 @@ project (shape)
 
 cmake_minimum_required(VERSION 3.0)
 
-set(PROJECT_SUBDIR ${PROJECT_NAME})
-
 set(PROJECT_CMAKE_MODULE_PATH ${PROJECT_CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
 set(${PROJECT_NAME}_CMAKE_MODULE_PATH ${PROJECT_CMAKE_MODULE_PATH})
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
@@ -56,7 +54,11 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 # configured config file persists. This variable is usually specified from the outside of CMake.
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}Config.cmake.in ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake @ONLY)
 
+#apply just configured file
 include(${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake)
+
+set(PROJECT_INSTALL_PREFIX ${PROJECT_NAME})
+set(CMAKE_INSTALL_PREFIX ${shape_DEPLOY})
 
 #library build
 add_subdirectory(include)
