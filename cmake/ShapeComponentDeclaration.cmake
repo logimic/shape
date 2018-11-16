@@ -103,7 +103,7 @@ function(DeployShapeConfigurationStartUp executable cfgName)
 	
 	configure_file(${shape_CMAKE_MODULE_PATH}/StartUp.in ${_TMP_FILE} @ONLY)
 	install(
-		FILES "${_TMP_FILE}"
+		PROGRAMS "${_TMP_FILE}"
 		DESTINATION ${cfgPath}
 		RENAME StartUp.${_SUFFIX}
 	)
