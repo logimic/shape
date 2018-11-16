@@ -92,7 +92,7 @@ endfunction()
 # The file <Project>.vcxpro.user is configured only if doesn't exist - it keeps possible manual changes
 function(ConfigureMsvcProject executable cfgName)
     if(MSVC)
-		set(_vcxProjUserName "${CMAKE_CURRENT_BINARY_DIR}/${cfgName}.vcxproj.user")
+		set(_vcxProjUserName "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.vcxproj.user")
         if (NOT EXISTS ${_vcxProjUserName})
 			if(${MSVC_VERSION} EQUAL 1700)
 				set(VS_VER 11.0)
