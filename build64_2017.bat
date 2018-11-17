@@ -21,4 +21,4 @@ cmake -G "Visual Studio 15 2017 Win64" -DBUILD_TESTING:BOOL=true -DSHAPE_DEPLOY:
 popd
 
 rem //build from generated build environment
-cmake --build %builddir%
+cmake --build %builddir% --target install
