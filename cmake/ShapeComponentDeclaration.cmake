@@ -99,11 +99,23 @@ function(DeployShapeConfigurationStartUp executable cfgName)
 	else()
 	  set(_SUFFIX bat)
 	endif()
-	set(_TMP_FILE ${CMAKE_CURRENT_BINARY_DIR}/tmp/runcfg/${cfgName}/StartUp.tmp)
+
+	set(_TMP_FILE ${CMAKE_CURRENT_BINARY_DIR}/tmp/runcfg/${cfgName}/StartUp)
 	
-	configure_file(${shape_CMAKE_MODULE_PATH}/StartUp.in ${_TMP_FILE} @ONLY)
+	set(_EXE "${shape_DEPLOY}/Debug/${executable}")		
+	configure_file(${shape_CMAKE_MODULE_PATH}/StartUp.in ${_TMP_FILE}.Debug @ONLY)
+	set(_EXE "${shape_DEPLOY}/Release/${executable}")		
+	configure_file(${shape_CMAKE_MODULE_PATH}/StartUp.in ${_TMP_FILE}.Release @ONLY)
+
 	install(
-		PROGRAMS "${_TMP_FILE}"
+		PROGRAMS "${_TMP_FILE}.Debug"
+		CONFIGURATIONS Debug
+		DESTINATION ${cfgPath}
+		RENAME StartUp.${_SUFFIX}
+	)
+	install(
+		PROGRAMS "${_TMP_FILE}.Release"
+		CONFIGURATIONS Release
 		DESTINATION ${cfgPath}
 		RENAME StartUp.${_SUFFIX}
 	)
