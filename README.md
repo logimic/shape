@@ -315,18 +315,18 @@ Launch configuration is defined in **config.json** file:
   "cacheDir": "cache",
   "userDir": "",
   "configurationDir": "configuration",
-  "deploymentDir": "../../../../shape/build/VS14_2015/bin/Debug",
+  "deploymentDir": "../../..",
   "components": [
     {
       "name": "shape::TraceFormatService",
-      "libraryPath": "",
+      "libraryPath": "shape/bin",
       "libraryName": "TraceFormatService",
       "enabled": true,
       "startlevel": -4
     },
     {
       "name": "shape::TraceFileService",
-      "libraryPath": "",
+      "libraryPath": "shape/bin",
       "libraryName": "TraceFileService",
       "enabled": true,
       "startlevel": -3
@@ -340,14 +340,14 @@ Launch configuration is defined in **config.json** file:
     },
     {
       "name": "shape::Example1_Thread",
-      "libraryPath": "../Example1_Thread/Debug",
+      "libraryPath": "shape/bin",
       "libraryName": "Example1_Thread",
       "enabled": true,
       "startlevel": 0
     },
     {
       "name": "shape::MyComponent",
-      "libraryPath": "../MyComponent/Debug",
+      "libraryPath": "shape/bin",
       "libraryName": "MyComponent",
       "enabled": true,
       "startlevel": 0
@@ -358,10 +358,10 @@ Launch configuration is defined in **config.json** file:
 ```
 Lets postpone details explanation now. The most important for launching is:
 - **configurationDir** directory with components configuration files relative to working directory.
-- **deploymentDir** default path to modules shared libraries relative to working directory.
+- **deploymentDir** path to deployment directory relative to working directory.
 - **components[]** declaring used components in this configuration where
   - **name** is component name (may be different from library name)\
-  - **libraryPath** is path to shared library implementing component. In case of "" it uses deploymentDir
+  - **libraryPath** is path to shared library implementing component relative  from deploymentDir.
   - **libraryName** is shared library name. Platform dependent prefix or suffix (lib, sh, dll) is added automaticaly
   - **enabled** is on/off flag if the component shall be loaded or ignored.
   - **startlevel** is start order (lower - more prio), Note it is not important to keep specific order, but it may be appropriate in some cases (e.g. more dependent components started at the end)
