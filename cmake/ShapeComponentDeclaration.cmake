@@ -92,7 +92,6 @@ endfunction()
 function(DeployShapeConfigurationStartUp executable cfgName)
 	set(cfgPath "\${CMAKE_INSTALL_CONFIG_NAME}/${PROJECT_INSTALL_PREFIX}/runcfg/${cfgName}")
 	
-	set(_EXE "${shape_DEPLOY}/Debug/${executable}")		
 	set(_ARGS "./configuration/config.json")
 	if(UNIX)
 	  set(_SUFFIX sh)
@@ -118,6 +117,17 @@ function(DeployShapeConfigurationStartUp executable cfgName)
 		CONFIGURATIONS Release
 		DESTINATION ${cfgPath}
 		RENAME StartUp.${_SUFFIX}
+	)
+endfunction()
+
+function(DeployShapeConfigurationTest executable cfgName)
+	set(cfgPath ${shape_DEPLOY}/$<CONFIGURATION>/${PROJECT_INSTALL_PREFIX}/runcfg/${cfgName})
+	set(_ARGS "./configuration/config.json")
+
+	add_test(
+		NAME ${cfgName}
+		COMMAND ${shape_DEPLOY}/$<CONFIGURATION>/${executable} ${_ARGS}
+		WORKING_DIRECTORY ${cfgPath}
 	)
 endfunction()
 
