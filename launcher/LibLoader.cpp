@@ -112,12 +112,32 @@ namespace shape {
   void LibLoader::openLibrary()
   {
     TRC_FUNCTION_ENTER(PAR(m_libraryPath) << PAR(m_libraryName));
+    
     if (nullptr == m_lib) {
+
+      //set explicit search path to load dependecies dll 
+      const unsigned BUFSIZE = 4096;
+      DWORD  retval = 0;
+      BOOL   success;
+      CHAR  buffer[BUFSIZE] = "";
+      LPSTR* lppPart = { NULL };
+
+      retval = GetFullPathName(
+        m_libraryPath.c_str(),
+        BUFSIZE,
+        buffer,
+        lppPart);
+
+      m_libraryPath = buffer;
+      SetDllDirectory(buffer);
+      m_libraryPathFile = m_libraryName;
+
       m_lib = LoadLibrary(m_libraryPathFile.c_str());
       if (nullptr == m_lib) {
         TRC_WARNING("Error load: " << NAME_PAR(errno, GetLastError()) << PAR(m_libraryPathFile));
       }
     }
+
     TRC_FUNCTION_LEAVE("");
   }
 
