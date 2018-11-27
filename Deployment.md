@@ -18,7 +18,9 @@ To structure Deploy in uniform way use predefined CMake functions in `shape/cmak
 - `function(DeployShapeComponent componentName)` to deploy component's binary
 - `function(DeployShapeConfiguration cfgName)` to deploy runtime configuration
 - `function(DeployShapeConfigurationStartUp executable cfgName)` to deploy StartUp script
-- `function(ConfigureMsvcProject executable cfgName)` to modify MSVC project user setup. It applies only if `vcxproj.user` doesn't already exists to avoid previous manual setup overwrite.
+- `function(ConfigureMsvcProject executable cfgName)` to modify MSVC project user setup. It applies only if `vcxproj.user` 
+doesn't already exists to avoid previous manual setup overwrite.
+- `DeployShapeConfigurationTest(executable cfgName)` to deploy test based on cfgName configuration
 
 ## Deploy tree structure
 Typical deployment build by recommended Cmake functions looks like:
