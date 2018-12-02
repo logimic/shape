@@ -136,6 +136,9 @@ namespace shape {
       if (nullptr == m_lib) {
         TRC_WARNING("Error load: " << NAME_PAR(errno, GetLastError()) << PAR(m_libraryPathFile));
       }
+
+      //reset dll search path to default
+      SetDllDirectory(nullptr);
     }
 
     TRC_FUNCTION_LEAVE("");
