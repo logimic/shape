@@ -123,7 +123,17 @@ namespace shape
         std::unique_ptr<Properties> target;
         GET_MEMBER_AS(*r, String, "name", "", ifname);
         GET_MEMBER_AS(*r, Properties, "target", "", target);
-        targetPropsMap[ifname] = std::move(target);
+        
+        auto it = component.getComponentMeta()->getRequiredInterfaceMap().find(ifname);
+        if (it != component.getComponentMeta()->getRequiredInterfaceMap().end()) {
+          targetPropsMap[ifname] = std::move(target);
+        }
+        else {
+          TRC_WARNING("Component instance" <<
+            PAR(m_instanceName) <<
+            "Targeted iface not found: " << PAR(ifname)
+          );
+        }
       }
     }
 
