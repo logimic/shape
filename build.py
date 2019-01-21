@@ -59,14 +59,14 @@ def main():
 
     print("command: " + command)  
     os.chdir(buildDir)   
-    call(command)    
+    os.system(command)    
 
     os.chdir(mainDir)
     command = "cmake --build " + buildDir + " --config Debug --target install"
-    call(command)  
+    os.system(command)  
 
     command = "cmake --build " + buildDir + " --config Release --target install"
-    call(command)      
+    os.system(command)      
 
 if __name__ == "__main__":
     mainDir  = os.getcwd()
