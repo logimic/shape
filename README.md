@@ -29,10 +29,11 @@ $ cd shape
 ```
 then one from these scripts by platform:
 ```bash
-$ build_2017.bat      #for Win x32, Generator MSVC2017
-$ build64_2017.bat    #for Win x64, Generator MSVC2017
-$ ./buildMake.sh      #for Linux
-$ ./buildEclipse.sh   #for Linux Eclipse IDE
+$ python3 build.py -G "Unix Makefiles"    #for Raspberry Pi
+$ build_2017.bat                          #for Win x32, Generator MSVC2017
+$ build64_2017.bat                        #for Win x64, Generator MSVC2017
+$ ./buildMake.sh                          #for Linux
+$ ./buildEclipse.sh                       #for Linux Eclipse IDE
 ```
 
 ## Generate Project
