@@ -26,47 +26,81 @@ mainDir  = ""
 def main():
 
     parser = argparse.ArgumentParser(description='Building script for Shape.')
-    parser.add_argument('-G','--gen', help='Generator', required=False)
+    parser.add_argument('-G','--gen', help='Generator. If you do not know call command \"cmake -G\"', required=False)
     # parser.add_argument('-D', action='append', nargs='*', help='Description for bar argument', required=False)    
     args = parser.parse_args()
 
-    if args.gen:
-        print("Generator:" + args.gen)    
+    if not args.gen:
+        print("Generator not specified, try use: -h")
+        return None
 
-    buildexp=os.path.normpath("/build/VS15_2017_x64") 
-    buildDir = os.path.normpath(mainDir + buildexp) 
+    buildFolder = "Unknown_Builder"
+
+    if args.gen:
+        print("Generator:" + args.gen)
+        if args.gen == "Unix Makefiles":
+            buildFolder = "Unix_Makefiles"
+        elif args.gen == "Visual Studio 15 2017 Win64":
+            buildFolder = "VS15_2017_x64"  
+        elif args.gen == "Visual Studio 15 2017":
+            buildFolder = "VS15_2017"                      
+
+    buildDir = os.path.normpath(mainDir + "/build/" + buildFolder) 
     
     # Create build dir
     if not os.path.exists(buildDir):
         os.makedirs(buildDir)  
 
-    deployDir = os.path.normpath(mainDir + "/deploy/VS15_2017_x64") 
+    deployDir = os.path.normpath(mainDir + "/deploy/" + buildFolder) 
     
     # Create build dir
     if not os.path.exists(deployDir):
         os.makedirs(deployDir)           
 
-    generator = ""
-    if args.gen:
-        generator = " -G \"" + args.gen +  "\""   
+    generator = " -G \"" + args.gen +  "\""   
 
+    # Parameters             
     dTesting = "-DBUILD_TESTING:BOOL=true"    
     dShapeDeploy= "-DSHAPE_DEPLOY:PATH=" + deployDir
-        
-    parameters = " " + dTesting + " " + dShapeDeploy
+    dDebug = "-DCMAKE_BUILD_TYPE=Debug"
+    dRelease = "-DCMAKE_BUILD_TYPE=Release"
 
-    command = "cmake" + generator + parameters + " " + mainDir        
+    # Building
+    if args.gen == "Unix Makefiles":
+ 
+        command = "cmake" + generator + " " + dTesting + " " + dDebug + " " + dShapeDeploy + " " + mainDir        
 
-    print("command: " + command)  
-    os.chdir(buildDir)   
-    os.system(command)    
+        print("command: " + command)  
+        os.chdir(buildDir)   
+        os.system(command)    
 
-    os.chdir(mainDir)
-    command = "cmake --build " + buildDir + " --config Debug --target install"
-    os.system(command)  
+        os.chdir(mainDir)
+        command = "cmake --build " + buildDir + " --config Debug --target install"
+        os.system(command)  
 
-    command = "cmake --build " + buildDir + " --config Release --target install"
-    os.system(command)      
+        command = "cmake" + generator + " " + dTesting + " " + dRelease + " " + dShapeDeploy + " " + mainDir        
+
+        print("command: " + command)  
+        os.chdir(buildDir)   
+        os.system(command)          
+
+        command = "cmake --build " + buildDir + " --config Release --target install"
+        os.system(command)     
+
+    else:
+        command = "cmake" + generator + " " + dTesting + " " + dShapeDeploy + " " + mainDir        
+
+        print("command: " + command)  
+        os.chdir(buildDir)   
+        os.system(command)    
+
+        os.chdir(mainDir)
+        command = "cmake --build " + buildDir + " --config Debug --target install"
+        os.system(command)  
+
+        command = "cmake --build " + buildDir + " --config Release --target install"
+        os.system(command)
+
 
 if __name__ == "__main__":
     mainDir  = os.getcwd()
