@@ -66,7 +66,7 @@ namespace shape {
       if (len <= 0) return;
       m_osbyte.setf(std::ios::hex, std::ios::basefield);
       m_osbyte.fill('0');
-      long i = 0;
+      size_t i = 0;
       while (true) {
         uint8_t bt = ((const unsigned char*)buf)[i++];
         m_osbyte << std::setw(2) << (short int)bt << separator;

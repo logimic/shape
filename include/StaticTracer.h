@@ -32,8 +32,8 @@ namespace shape { \
     tracer.setBuffered(); \
     return tracer; \
   } \
-  static Tracer& _shape_log(Tracer::get());\
 }
+//static Tracer& _shape_log(Tracer::get()); \
 
 #ifndef SHAPE_STATIC_LIBS
 #define TRC_INIT_MODULE(moduleName) TRC_INIT_MNAME(moduleName)
