@@ -322,13 +322,13 @@ namespace shape
     TRC_FUNCTION_ENTER(NAME_PAR(instanceName, getInstanceName()));
 
     //is satisfied?
-    bool satisfied = true;
-    for (auto req : getRequiredInterfaces()) {
-      if (!req->isSatisfied()) {
-        satisfied = false;
-        break;
-      }
-    }
+    //bool satisfied = true;
+    //for (auto req : getRequiredInterfaces()) {
+    //  if (!req->isSatisfied()) {
+    //    satisfied = false;
+    //    break;
+    //  }
+    //}
 
     if (m_state == MyState::ACTIVE)
     {
