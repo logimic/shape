@@ -33,6 +33,12 @@ if(NOT CMAKE_BUILD_TOOL MATCHES "(msdev|devenv|nmake|MSBuild)")
 	endif()
 endif()
 
+#############
+set(CPPFLAGS "-Wdate-time -D_FORTIFY_SOURCE=2")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wall -Wextra ${CPPFLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O2 -fstack-protector-strong -Wformat -Werror=format-security -Wall -Wextra ${CPPFLAGS}")
+#############
+
 if(${SHAPE_STATIC_LIBS})
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DSHAPE_STATIC_LIBS")
 endif()
