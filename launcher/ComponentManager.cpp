@@ -39,8 +39,8 @@ namespace shape
   }
 
   ComponentManager::ComponentManager()
-    : m_configurationDir("./configuration")
-    , m_deploymentDir("./configuration")
+    : m_deploymentDir("./configuration")
+    , m_configurationDir("./configuration")
     , m_applicationName("Shape startup")
     , m_predefinedCompiler(SHAPE_PREDEF_COMPILER)
   {

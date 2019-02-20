@@ -63,9 +63,9 @@ namespace shape
     std::vector<std::shared_ptr<ProvidedInterface>> m_providedInterfaces;
     std::vector<std::shared_ptr<RequiredInterface>> m_requiredInterfaces;
     std::shared_ptr<Properties> m_properties;
+    std::string m_instanceName;
     const Component & m_component;
     ObjectTypeInfo* m_instance;
-    std::string m_instanceName;
     MyState m_state = MyState::UNKNOWN;
 
   };

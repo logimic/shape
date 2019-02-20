@@ -88,8 +88,8 @@ namespace shape {
   }
 
   Component::Component(const ComponentMeta * componentMeta)
-    : m_componentName(componentMeta->getComponentName())
-    , m_componentMeta(componentMeta)
+    : m_componentMeta(componentMeta)
+    , m_componentName(componentMeta->getComponentName())
   {
   }
 
