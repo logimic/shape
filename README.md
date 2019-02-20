@@ -21,17 +21,19 @@ C++ modular and scalable framework.
 - Cmake
 - Pyhon 3.x
 
-## Usage
+## Build
 
 ```bash
 $ git clone https://github.com/logimic/shape.git
 $ cd shape
-$ py shape.py --build
-or
-$ build32.bat         #for Win x86
-$ build64.bat         #for Win x64
-$ ./buildMake.sh      #for Linux
-$ ./buildEclipse.sh   #for Linux Eclipse IDE
+```
+then one from these scripts by platform:
+```bash
+$ python3 build.py -G "Unix Makefiles"    #for Raspberry Pi
+$ build_2017.bat                          #for Win x32, Generator MSVC2017
+$ build64_2017.bat                        #for Win x64, Generator MSVC2017
+$ ./buildMake.sh                          #for Linux
+$ ./buildEclipse.sh                       #for Linux Eclipse IDE
 ```
 
 ## Generate Project
