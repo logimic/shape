@@ -27,12 +27,13 @@
 /// init static tracer
 #define TRC_INIT_MNAME(moduleName) \
 namespace shape { \
+  static Tracer& _shape_log(Tracer::get()); \
   shape::Tracer& shape::Tracer::get() { \
+    (void)_shape_log; \
     static Tracer tracer(#moduleName); \
     tracer.setBuffered(); \
     return tracer; \
   } \
-  static Tracer& _shape_log(Tracer::get()); \
 }
 
 #ifndef SHAPE_STATIC_LIBS
