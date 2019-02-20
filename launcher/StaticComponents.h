@@ -54,11 +54,11 @@ extern "C" {
 
 void staticInit()
 {
-  void* component = nullptr;
+  //void* component = nullptr;
   unsigned long compiler = 0;
   size_t hashcode = 0;
-  unsigned long expectedCompiler = (unsigned long)SHAPE_PREDEF_COMPILER;
-  size_t expectedHashcode = std::type_index(typeid(shape::ComponentMeta)).hash_code();
+  //unsigned long expectedCompiler = (unsigned long)SHAPE_PREDEF_COMPILER;
+  //size_t expectedHashcode = std::type_index(typeid(shape::ComponentMeta)).hash_code();
 
   shape::ComponentMap::get().setComponent(&get_component_shape__LauncherService(&compiler, &hashcode));
   shape::ComponentMap::get().setComponent(&get_component_shape__ConfigurationService(&compiler, &hashcode));

@@ -119,7 +119,7 @@ namespace shape {
           int maxSize = 0;
           GET_POSSIBLE_MEMBER_AS(*props, Int, "maxSizeMB", "", maxSize);
           if (maxSize > 0) {
-            long long ms = maxSize * FILE_SIZE_1MB;
+            //long long ms = maxSize * FILE_SIZE_1MB;
             if (maxSize > FILE_SIZE_1MB)
               m_maxFileSize = maxSize;
           }
@@ -158,7 +158,7 @@ namespace shape {
 
     void openFile()
     {
-      static unsigned count = 0;
+      //static unsigned count = 0;
 
       if (m_path.empty()) {
         m_tracePathFile = "./";

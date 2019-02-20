@@ -57,7 +57,6 @@ namespace shape {
     {
       if (m_argc > 0)
       {
-        int n = 0;
         for (int n = 0; n < m_argc; n++)
           delete[] m_argv[n];
         delete[] m_argv;

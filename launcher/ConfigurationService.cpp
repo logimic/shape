@@ -81,11 +81,7 @@ namespace shape {
 
   void ConfigurationService::attachInterface(ITraceService* iface)
   {
-    //TRC_FUNCTION_ENTER(PAR(iface));
-    //shape::Tracer::get().addTracerService(iface);
-    //shape::Tracer::get().resetBuffered();
-    //shape::Tracer::get().writeBuffer();
-    //TRC_FUNCTION_LEAVE("")
+    (void)iface; //silence -Wunused-parameter
   }
 
   void ConfigurationService::detachInterface(ITraceService* iface)
