@@ -71,7 +71,7 @@ namespace shape {
   private:
     void initArgs()
     {
-      m_argc = m_argsVect.size();
+      m_argc = static_cast<int>(m_argsVect.size());
       if (m_argc > 0)
       {
         m_argv = shape_new char *[m_argc + 1];

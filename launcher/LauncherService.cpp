@@ -24,7 +24,7 @@
 #include "Trace.h"
 
 extern "C" {
-  SHAPE_ABI_EXPORT void* get_component_shape__LauncherService(unsigned long* compiler, unsigned long* typehash)
+  SHAPE_ABI_EXPORT void* get_component_shape__LauncherService(unsigned long* compiler, size_t* typehash)
   {
     static shape::ComponentMetaTemplate<shape::LauncherService> component("shape::LauncherService");
     component.provideInterface<shape::ILaunchService>("shape::ILaunchService");

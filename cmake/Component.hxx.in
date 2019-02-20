@@ -9,7 +9,7 @@
 #include <ShapeComponent.h>
 
 extern "C" {
-  SHAPE_ABI_EXPORT void* get_component_@NAMESPACE_COMPONENT@(unsigned long* compiler, unsigned long* typehash)
+  SHAPE_ABI_EXPORT void* get_component_@NAMESPACE_COMPONENT@(unsigned long* compiler, size_t* typehash)
   {
     *compiler = SHAPE_PREDEF_COMPILER;
     *typehash = std::type_index(typeid(shape::ComponentMeta)).hash_code();

@@ -127,9 +127,9 @@ namespace shape {
 
         void* component = nullptr;
         unsigned long compiler = 0;
-        unsigned long hashcode = 0;
+        size_t hashcode = 0;
         unsigned long expectedCompiler = (unsigned long)SHAPE_PREDEF_COMPILER;
-        unsigned long expectedHashcode = std::type_index(typeid(ComponentMeta)).hash_code();
+        size_t expectedHashcode = std::type_index(typeid(ComponentMeta)).hash_code();
 
         // check loader
         if (!m_libLoader.isOpenedLibrary()) {
@@ -282,7 +282,7 @@ namespace shape {
         GET_POSSIBLE_MEMBER_AS(*props, String, CONFIG_INSTANCE_STR, "", instId);
       }
       catch (std::exception &e) {
-        //TODO
+        CATCH_EXC_TRC_WAR(std::exception, e, "");
       }
 
       // check if exists

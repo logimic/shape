@@ -25,7 +25,7 @@
 #include "Trace.h"
 
 extern "C" {
-  SHAPE_ABI_EXPORT void* get_component_shape__ConfigurationService(unsigned long* compiler, unsigned long* typehash)
+  SHAPE_ABI_EXPORT void* get_component_shape__ConfigurationService(unsigned long* compiler, size_t* typehash)
   {
     static shape::ComponentMetaTemplate<shape::ConfigurationService> component("shape::ConfigurationService");
     component.provideInterface<shape::IConfigurationService>("shape::IConfigurationService");

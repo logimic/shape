@@ -320,6 +320,6 @@ namespace shape {
   };
 
   //--------------------------------------
-  typedef void*(*GetMetaComponent)(unsigned long*, unsigned long*);
+  typedef void*(*GetMetaComponent)(unsigned long*, size_t*);
 
 }

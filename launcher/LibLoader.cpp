@@ -118,7 +118,7 @@ namespace shape {
       //set explicit search path to load dependecies dll 
       const unsigned BUFSIZE = 4096;
       DWORD  retval = 0;
-      BOOL   success;
+      //BOOL   success;
       CHAR  buffer[BUFSIZE] = "";
       LPSTR* lppPart = { NULL };
 

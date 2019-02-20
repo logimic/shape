@@ -62,7 +62,7 @@ namespace shape {
     TracerMemHexChar & operator = (const TracerMemHexChar& t) = delete;
     TracerMemHexChar(const TracerMemHexChar& t) = delete;
 
-    TracerMemHexChar(const void* buf, const long len, char separator) {
+    TracerMemHexChar(const void* buf, size_t len, char separator) {
       if (len <= 0) return;
       m_osbyte.setf(std::ios::hex, std::ios::basefield);
       m_osbyte.fill('0');
