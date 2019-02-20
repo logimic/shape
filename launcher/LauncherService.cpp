@@ -44,6 +44,7 @@ using namespace std;
 namespace shape {
   void LauncherService::activate(const Properties *props)
   {
+    (void)props; //silence -Wunused-parameter
     TRC_FUNCTION_ENTER("");
     TRC_INFORMATION("\n******************************\n" << "LauncherService::activate()\n" << "******************************");
     TRC_FUNCTION_LEAVE("")
@@ -58,6 +59,7 @@ namespace shape {
 
   void LauncherService::modify(const Properties *props)
   {
+    (void)props; //silence -Wunused-parameter
   }
 
   void LauncherService::attachInterface(ITraceService* iface)

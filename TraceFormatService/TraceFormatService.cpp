@@ -80,6 +80,7 @@ namespace shape {
 
     void modify(const Properties *props)
     {
+      (void)props; //silence -Wunused-parameter
     }
 
   };

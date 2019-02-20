@@ -55,7 +55,7 @@ namespace shapeExpl {
 
   void ComponentTemplate::activate(const shape::Properties *props)
   {
-    TRC_FUNCTION_ENTER("");
+    TRC_FUNCTION_ENTER(PAR(props));
     TRC_INFORMATION(std::endl <<
       "******************************" << std::endl <<
       "ComponentTemplate instance activate" << std::endl <<
@@ -77,6 +77,7 @@ namespace shapeExpl {
 
   void ComponentTemplate::modify(const shape::Properties *props)
   {
+    (void)props; //silence -Wunused-parameter
   }
 
   void ComponentTemplate::attachInterface(shape::ITraceService* iface)

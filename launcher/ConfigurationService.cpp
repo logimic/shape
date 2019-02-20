@@ -61,6 +61,7 @@ namespace shape {
 
   void ConfigurationService::activate(const Properties *props)
   {
+    (void)props; //silence -Wunused-parameter
     TRC_FUNCTION_ENTER("");
     TRC_INFORMATION("\n******************************\n" << "ConfigurationService::activate()\n" << "******************************");
     TRC_FUNCTION_LEAVE("")
@@ -75,6 +76,7 @@ namespace shape {
 
   void ConfigurationService::modify(const Properties *props)
   {
+    (void)props; //silence -Wunused-parameter
   }
 
   void ConfigurationService::attachInterface(ITraceService* iface)

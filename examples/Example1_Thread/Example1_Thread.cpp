@@ -39,6 +39,7 @@ namespace shape {
 
   void Example1_Thread::activate(const Properties *props)
   {
+    (void)props; //silence -Wunused-parameter
     TRC_FUNCTION_ENTER("");
     TRC_INFORMATION(std::endl <<
       "******************************" << std::endl <<
@@ -72,6 +73,7 @@ namespace shape {
 
   void Example1_Thread::modify(const Properties *props)
   {
+    (void)props; //silence -Wunused-parameter
   }
 
   void Example1_Thread::attachInterface(ITraceService* iface)
