@@ -20,8 +20,8 @@
 #include <iomanip>
 
 /// formats
-#define MEM_HEX_CHAR(ptr, len)  shape::TracerMemHexChar((const void*)ptr, len, ' ')
-#define MEM_HEX(ptr, len)       shape::TracerMemHex((const void*)ptr, len, '.')
+#define MEM_HEX_CHAR(ptr, len)  shape::TracerMemHexChar((const void*)ptr, static_cast<long>(len), ' ')
+#define MEM_HEX(ptr, len)       shape::TracerMemHex((const void*)ptr, static_cast<long>(len), '.')
 
 namespace shape {
   class TracerMemHex
