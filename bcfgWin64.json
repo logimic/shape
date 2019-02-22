@@ -1,0 +1,7 @@
+{
+  "generator": "\"Visual Studio 15 2017 Win64\"",
+  "parameters": [
+    "-DBUILD_TESTING:BOOL=true",
+    "-DSHAPE_DEPLOY:PATH=d:\\OpenEdgeGateway\\shape\\deploy\\"
+  ]
+}

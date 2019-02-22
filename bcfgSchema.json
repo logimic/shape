@@ -1,0 +1,33 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$id": "http://example.com/example.json",
+    "title": "thing",
+    "self": {
+        "vendor": "com.logimic",
+        "name": "thing",
+        "format": "jsonschema",
+        "version": "1-0-0"
+    },
+    "type": "object",
+    "properties": {
+        "generator": {
+            "type": "string",
+            "default": "\"Visual Studio 15 2017 Win64\"",
+            "description": "Compiler",
+            "enum": [
+                "\"Visual Studio 15 2017 Win64\""
+            ]
+        },
+        "parameters": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "description": "-DBUILD_TESTING:BOOL=true and more..."
+            }
+        }
+    },
+    "required": [
+        "generator",
+        "parameters"
+    ]
+}

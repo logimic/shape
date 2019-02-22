@@ -19,7 +19,6 @@ import sys, os
 import pathlib
 import shutil
 import argparse
-import json
 from subprocess import call
 
 mainDir  = ""
@@ -27,45 +26,23 @@ mainDir  = ""
 def main():
 
     parser = argparse.ArgumentParser(description='Building script for Shape.')
-    parser.add_argument('-C','--json', help='Configuration JSON file', required=False)
-    # parser.add_argument('-G','--gen', help='Generator. If you do not know call command \"cmake -G\"', required=False)
+    parser.add_argument('-G','--gen', help='Generator. If you do not know call command \"cmake -G\"', required=False)
     # parser.add_argument('-D', action='append', nargs='*', help='Description for bar argument', required=False)    
     args = parser.parse_args()
 
-    # Check arguments
-    if not args.json:
-        print("No configuration file... e.g. -C myCfg.json")
-        return None  
-
-    # Open config file
-    try:
-        with open(args.json) as f:
-            data = json.load(f) 
-    except IOError:
-        print("Wrong path or config JSON file.!!!")
-        return None      
-
-    # Check keys
-    if ('generator' not in data):
-        print("\generator\" key is not specified in JSON file.")
+    if not args.gen:
+        print("Generator not specified, try use: -h")
         return None
 
-    if ('parameters' not in data):
-        print("\parameters\" key is not specified in JSON file.")
-        return None        
-
-    gen = data["generator"]
-    params = data["parameters"]
-    
     buildFolder = "Unknown_Builder"
 
-    if gen:
-        print("Generator:" + gen)
-        if gen == "\"Unix Makefiles\"":
+    if args.gen:
+        print("Generator:" + args.gen)
+        if args.gen == "Unix Makefiles":
             buildFolder = "Unix_Makefiles"
-        elif gen == "\"Visual Studio 15 2017 Win64\"":
+        elif args.gen == "Visual Studio 15 2017 Win64":
             buildFolder = "VS15_2017_x64"  
-        elif gen == "\"Visual Studio 15 2017\"":            
+        elif args.gen == "Visual Studio 15 2017":
             buildFolder = "VS15_2017"                      
 
     buildDir = os.path.normpath(mainDir + "/build/" + buildFolder) 
@@ -74,35 +51,24 @@ def main():
     if not os.path.exists(buildDir):
         os.makedirs(buildDir)  
 
-    #deployDir = os.path.normpath(mainDir + "/deploy/" + buildFolder) 
+    deployDir = os.path.normpath(mainDir + "/deploy/" + buildFolder) 
     
-    # Create deploy dir
-    for p in params:        
-        if "-DSHAPE_DEPLOY:PATH=" in p:
-            index = p.index('=')
-            deployDirBase = p[index + 1:]                        
-
-    deployDir = os.path.normpath(deployDirBase + buildFolder) 
-
+    # Create build dir
     if not os.path.exists(deployDir):
         os.makedirs(deployDir)           
 
-    # Generator
-    generator = " -G " + gen
+    generator = " -G \"" + args.gen +  "\""   
 
-    # Parameters      
-    dParams = ""
-
-    for param in params:
-        print(param) 
-        if "-DSHAPE_DEPLOY:PATH=" in param:
-            param = '-DSHAPE_DEPLOY:PATH=' + deployDir
-        dParams = dParams + " " + param
+    # Parameters             
+    dTesting = "-DBUILD_TESTING:BOOL=true"    
+    dShapeDeploy= "-DSHAPE_DEPLOY:PATH=" + deployDir
+    dDebug = "-DCMAKE_BUILD_TYPE=Debug"
+    dRelease = "-DCMAKE_BUILD_TYPE=Release"
 
     # Building
-    if gen == "\"Unix Makefiles\"":
+    if args.gen == "Unix Makefiles":
  
-        command = "cmake" + generator + " " + dParams + " -DCMAKE_BUILD_TYPE=Debug " + mainDir        
+        command = "cmake" + generator + " " + dTesting + " " + dDebug + " " + dShapeDeploy + " " + mainDir        
 
         print("command: " + command)  
         os.chdir(buildDir)   
@@ -112,7 +78,7 @@ def main():
         command = "cmake --build " + buildDir + " --config Debug --target install"
         os.system(command)  
 
-        command = "cmake" + generator + " " + dParams + " -DCMAKE_BUILD_TYPE=Release " + mainDir          
+        command = "cmake" + generator + " " + dTesting + " " + dRelease + " " + dShapeDeploy + " " + mainDir        
 
         print("command: " + command)  
         os.chdir(buildDir)   
@@ -122,7 +88,7 @@ def main():
         os.system(command)     
 
     else:
-        command = "cmake" + generator + " " + dParams + " " + mainDir        
+        command = "cmake" + generator + " " + dTesting + " " + dShapeDeploy + " " + mainDir        
 
         print("command: " + command)  
         os.chdir(buildDir)   
