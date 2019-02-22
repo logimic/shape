@@ -54,6 +54,7 @@ def main():
         print("\parameters\" key is not specified in JSON file.")
         return None        
 
+    # Set parametres
     gen = data["generator"]
     params = data["parameters"]
     
@@ -74,19 +75,6 @@ def main():
     if not os.path.exists(buildDir):
         os.makedirs(buildDir)  
 
-    #deployDir = os.path.normpath(mainDir + "/deploy/" + buildFolder) 
-    
-    # Create deploy dir
-    for p in params:        
-        if "-DSHAPE_DEPLOY:PATH=" in p:
-            index = p.index('=')
-            deployDirBase = p[index + 1:]                        
-
-    deployDir = os.path.normpath(deployDirBase + buildFolder) 
-
-    if not os.path.exists(deployDir):
-        os.makedirs(deployDir)           
-
     # Generator
     generator = " -G " + gen
 
@@ -96,7 +84,20 @@ def main():
     for param in params:
         print(param) 
         if "-DSHAPE_DEPLOY:PATH=" in param:
+            index = param.index('=')
+            dDir = param[index + 1:]       
+ 
+            if dDir == './' or dDir == '.' or dDir == '' or dDir == ' ': # Shape internal deploy                
+                deployDir = os.path.normpath(mainDir + "/deploy/" + buildFolder)
+            else:
+                deployDir = os.path.normpath(dDir + '/' + buildFolder)
+            
+            if not os.path.exists(deployDir):
+                os.makedirs(deployDir)
+
             param = '-DSHAPE_DEPLOY:PATH=' + deployDir
+            print('Final param: ' + param)                
+
         dParams = dParams + " " + param
 
     # Building
