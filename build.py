@@ -20,26 +20,45 @@ import pathlib
 import shutil
 import argparse
 import json
+import platform
 from subprocess import call
+
+# Date: 25-Feb-2018
+# Version:
+ver = '1.0.0'
 
 mainDir  = ""
 
 def main():
 
     parser = argparse.ArgumentParser(description='Building script for Shape.')
-    parser.add_argument('-C','--json', help='Configuration JSON file', required=False)
+    # parser.add_argument('-C','--json', help='Configuration JSON file', required=False)
     # parser.add_argument('-G','--gen', help='Generator. If you do not know call command \"cmake -G\"', required=False)
     # parser.add_argument('-D', action='append', nargs='*', help='Description for bar argument', required=False)    
     args = parser.parse_args()
 
-    # Check arguments
-    if not args.json:
-        print("No configuration file... e.g. -C myCfg.json")
-        return None  
+    # Welcome print
+    print('*****************************************************')
+    print('Building procedure by Logimic, s.r.o, www.logimic.com')
+    print('Version:' + ver)
+    print('*****************************************************')
+
+    # Determine config JSON file
+    buildCfg = ''
+    system = platform.system()
+
+    if system == 'Windows':
+        buildCfg = 'bcfgWin.json'
+    elif system == 'Linux':
+        buildCfg = 'bcfgLin.json'
+    else:
+        return None
+
+    print('Platform file: ' + buildCfg)
 
     # Open config file
     try:
-        with open(args.json) as f:
+        with open(buildCfg) as f:
             data = json.load(f) 
     except IOError:
         print("Wrong path or config JSON file.!!!")
@@ -62,11 +81,11 @@ def main():
 
     if gen:
         print("Generator:" + gen)
-        if gen == "\"Unix Makefiles\"":
+        if gen == "Unix Makefiles":
             buildFolder = "Unix_Makefiles"
-        elif gen == "\"Visual Studio 15 2017 Win64\"":
+        elif gen == "Visual Studio 15 2017 Win64":
             buildFolder = "VS15_2017_x64"  
-        elif gen == "\"Visual Studio 15 2017\"":            
+        elif gen == "Visual Studio 15 2017":            
             buildFolder = "VS15_2017"                      
 
     buildDir = os.path.normpath(mainDir + "/build/" + buildFolder) 
@@ -76,14 +95,14 @@ def main():
         os.makedirs(buildDir)  
 
     # Generator
-    generator = " -G " + gen
+    generator = " -G \"" + gen + "\""
 
     # Parameters      
     dParams = ""
 
     for param in params:
         print(param) 
-        if "-DSHAPE_DEPLOY:PATH=" in param:
+        if "SHAPE_DEPLOY:PATH=" in param:
             index = param.index('=')
             dDir = param[index + 1:]       
  
@@ -95,13 +114,42 @@ def main():
             if not os.path.exists(deployDir):
                 os.makedirs(deployDir)
 
-            param = '-DSHAPE_DEPLOY:PATH=' + deployDir
-            print('Final param: ' + param)                
+            param = 'SHAPE_DEPLOY:PATH=' + deployDir
 
-        dParams = dParams + " " + param
+        if "shape_DIR:PATH=" in param:
+            index = param.index('=')
+            dDir = param[index + 1:]       
+ 
+            if dDir == './' or dDir == '.' or dDir == '' or dDir == ' ': # Shape internal deploy                                
+                os.chdir("..")
+                shapeDir = os.path.normpath(os.getcwd() + "/shape/" +  "/build/" + buildFolder)      
+                os.chdir(mainDir)          
+            else:
+                shapeDir = os.path.normpath(dDir + '/' + buildFolder)
+
+            param = 'shape_DIR:PATH=' + shapeDir
+
+        if "shapeware_DIR:PATH=" in param:
+            index = param.index('=')
+            dDir = param[index + 1:]       
+ 
+            if dDir == './' or dDir == '.' or dDir == '' or dDir == ' ': # Shape internal deploy                                
+                os.chdir("..")
+                shapewareDir = os.path.normpath(os.getcwd() + "/shapeware/" +  "/build/" + buildFolder)      
+                os.chdir(mainDir)          
+            else:
+                shapewareDir = os.path.normpath(dDir + '/' + buildFolder)
+
+            param = 'shapeware_DIR:PATH=' + shapewareDir            
+            
+        dParams = dParams + " -D" + param
+
+    print('Final params: ' + dParams)  
+
+    #return None     
 
     # Building
-    if gen == "\"Unix Makefiles\"":
+    if gen == "Unix Makefiles":
  
         command = "cmake" + generator + " " + dParams + " -DCMAKE_BUILD_TYPE=Debug " + mainDir        
 

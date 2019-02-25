@@ -1,0 +1,7 @@
+{
+  "generator": "Visual Studio 15 2017 Win64",
+  "parameters": [
+    "BUILD_TESTING:BOOL=true",
+    "SHAPE_DEPLOY:PATH=./"
+  ]
+}

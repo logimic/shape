@@ -1,5 +1,5 @@
 {
-  "generator": "\"Unix Makefiles\"",
+  "generator": "Unix Makefiles",
   "parameters": [
     "-DBUILD_TESTING:BOOL=true",
     "-DSHAPE_DEPLOY:PATH=./"
