@@ -60,6 +60,12 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 # configured config file persists. This variable is usually specified from the outside of CMake.
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}Config.cmake.in ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake @ONLY)
 
+# Description and default value of options
+option(BUILD_TESTING "Builds the test." NO)
+option(SHAPE_BUILD_EXAMPLES "Builds the shape's examples." YES)
+option(SHAPE_DEPLOY "Shape deployment path.")
+option(SHAPE_STATIC_LIBS "Builds shape as static library." NO)
+
 #apply just configured file
 include(${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake)
 
@@ -74,7 +80,9 @@ add_subdirectory(TraceFormatService)
 add_subdirectory(TraceFileService)
 add_subdirectory(ComponentTemplate)
 
-add_subdirectory(examples/Example1_Thread)
+if(${SHAPE_BUILD_EXAMPLES})
+	add_subdirectory(examples/Example1_Thread)
+endif()
 
 if(${BUILD_TESTING})
 	#external submodules
