@@ -84,6 +84,7 @@ function(DeployShapeConfiguration cfgName)
 		install(
 			DIRECTORY "${src}/"
 			DESTINATION ${dst}
+			USE_SOURCE_PERMISSIONS
 		)
 	endwhile()
 
