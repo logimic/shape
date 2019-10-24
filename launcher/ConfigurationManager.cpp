@@ -68,6 +68,9 @@ namespace shape
         }
       }
     }
+    else {
+      m_componentConfigs[component->getComponentName()].m_component = component;
+    }
     TRC_FUNCTION_LEAVE("");
   }
 
@@ -97,7 +100,7 @@ namespace shape
       }
       else {
         shared_ptr<Configuration> shpc(shape_new Configuration(instanceName, componentName, this));
-        auto result = componentCfg.m_configs.insert(make_pair(componentName, shpc));
+        auto result = componentCfg.m_configs.insert(make_pair(instanceName, shpc));
         if (!result.second) {
           THROW_EXC_TRC_WAR(std::logic_error, "Cannot insert duplicit: " << PAR(instanceName));
         }
@@ -147,16 +150,14 @@ namespace shape
         if (validatorIt != m_validatorMap.end()) {
           //found validator
           cfg->validate(validatorIt->second);
-          if (cfg->isValidated()) {
-            componentCfg.m_component->updateInstance(cfg->getId(), cfg->getProperties());
-          }
-          else {
+          if (!cfg->isValidated()) {
             THROW_EXC_TRC_WAR(std::logic_error, "Configuration invalid according JSON schema: " << NAME_PAR(componentName, cfg->getComponentName()));
           }
         }
         else {
-          THROW_EXC_TRC_WAR(std::logic_error, "Missing JSON schema for validation: " << NAME_PAR(componentName, cfg->getComponentName()));
+          TRC_WARNING("Missing JSON schema for recommended validation: " << NAME_PAR(componentName, cfg->getComponentName()));
         }
+        componentCfg.m_component->updateInstance(cfg->getId(), cfg->getProperties());
       }
     }
     TRC_FUNCTION_LEAVE("");

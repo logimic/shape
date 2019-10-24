@@ -51,21 +51,19 @@ namespace shape {
     , m_cmgr(cmgr)
   {
     m_properties.reset(shape_new shape::PropertiesJson());
+    using namespace rapidjson;
+
+    // set as object to allow members adding
+    Document & doc = m_properties->getAsJson();
+    doc.SetObject();
+
     //add mandatory props
-    try {
-      SET_MEMBER_AS(*m_properties, String, CONFIG_INSTANCE_STR, "", m_id);
-    }
-    catch (...) {
-      THROW_EXC_TRC_WAR(std::logic_error, "Cannot add mandatory property: " << PAR(CONFIG_INSTANCE_STR));
-    }
-
-    try {
-      SET_MEMBER_AS(*m_properties, String, CONFIG_COMPONENT_STR, "", m_componentName);
-    }
-    catch (...) {
-      THROW_EXC_TRC_WAR(std::logic_error, "Cannot add mandatory property: " << PAR(CONFIG_COMPONENT_STR));
-    }
-
+    std::string inst = "/";
+    inst += CONFIG_INSTANCE_STR;
+    std::string comp = "/";
+    comp += CONFIG_COMPONENT_STR;
+    Pointer(inst).Set(doc, m_id, doc.GetAllocator());
+    Pointer(comp).Set(doc, m_componentName, doc.GetAllocator());
   }
 
   Configuration::Configuration(const std::string& fname, ConfigurationManager* cfgAdmin)

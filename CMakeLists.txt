@@ -110,6 +110,8 @@ include(${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake)
 set(PROJECT_INSTALL_PREFIX ${PROJECT_NAME})
 set(CMAKE_INSTALL_PREFIX ${shape_DEPLOY})
 
+add_definitions(-DRAPIDJSON_HAS_STDSTRING)
+
 #library build
 add_subdirectory(include)
 add_subdirectory(startup)

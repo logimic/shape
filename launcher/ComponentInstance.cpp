@@ -322,23 +322,25 @@ namespace shape
     TRC_FUNCTION_ENTER(NAME_PAR(instanceName, getInstanceName()));
 
     //is satisfied?
-    //bool satisfied = true;
-    //for (auto req : getRequiredInterfaces()) {
-    //  if (!req->isSatisfied()) {
-    //    satisfied = false;
-    //    break;
-    //  }
-    //}
-
-    if (m_state == MyState::ACTIVE)
-    {
-      m_state = MyState::CREATE;
-      
-      //unpublish provided interfaces
-      for (auto provIface : m_providedInterfaces) {
-        ComponentManager::getInst().removeProvidedInterface(provIface);
+    bool satisfied = true;
+    for (auto req : getRequiredInterfaces()) {
+      if (!req->isSatisfied()) {
+        satisfied = false;
+        break;
       }
-      m_component.getComponentMeta()->deactivate(m_instance);
+    }
+
+    if (!satisfied) {
+      if (m_state == MyState::ACTIVE)
+      {
+        m_state = MyState::CREATE;
+
+        //unpublish provided interfaces
+        for (auto provIface : m_providedInterfaces) {
+          ComponentManager::getInst().removeProvidedInterface(provIface);
+        }
+        m_component.getComponentMeta()->deactivate(m_instance);
+      }
     }
 
     TRC_FUNCTION_LEAVE(NAME_PAR(instanceName, getInstanceName()));
