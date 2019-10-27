@@ -92,7 +92,7 @@ namespace shape {
       }
     }
 
-    bool isSubsetOf(const Properties & props) const
+    bool isSubsetOf(const Properties & props) const override
     {
       bool result = true;
       try {
@@ -466,7 +466,7 @@ namespace shape {
         vct.SetArray();
         for (const auto & it : val) {
           rapidjson::Value ins;
-          ins.Set(it, alloc);
+          ins.Set<T>(it, alloc);
           vct.PushBack(ins, alloc);
         }
         rapidjson::Value jname(rapidjson::kStringType);
@@ -481,7 +481,7 @@ namespace shape {
         m->value.Clear();
         for (const auto & it : val) {
           rapidjson::Value ins;
-          ins.Set(it, alloc);
+          ins.Set<T>(it, alloc);
           m->value.PushBack(ins, alloc);
         }
       }
