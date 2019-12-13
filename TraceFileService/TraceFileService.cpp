@@ -19,14 +19,18 @@
 #include "TraceLevel.h"
 #include "ShapePropertiesMacros.h"
 #include "ShapeDefines.h"
+#include "TimeString.h"
 #include <fstream>
 #include <iostream>
 #include <iomanip>
 #include <mutex>
+#include <map>
 
 #ifdef SHAPE_PLATFORM_WINDOWS
+#include <windows.h>
 #include <direct.h>
 #else
+#include <dirent.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #endif
@@ -50,7 +54,12 @@ namespace shape {
     std::map<int, int> m_traceLevelMap;
     ITraceFormatService* m_formatService = nullptr;
     bool m_fileError = false;
+    // timestamp files
     bool m_timestamp = false;
+    // max age of fles in minutes
+    int m_maxAgeMinutes = 0;
+    // max number of files
+    int m_maxNumber = 0;
 
   public:
     Imp()
@@ -125,6 +134,8 @@ namespace shape {
           }
 
           GET_POSSIBLE_MEMBER_AS(*props, Bool, "timestampFiles", "", m_timestamp);
+          GET_POSSIBLE_MEMBER_AS(*props, Int, "maxAgeMinutes", "", m_maxAgeMinutes);
+          GET_POSSIBLE_MEMBER_AS(*props, Int, "maxNumber", "", m_maxNumber);
 
           // filename
           GET_MEMBER_AS(*props, String, "filename", "", m_fname);
@@ -158,40 +169,34 @@ namespace shape {
 
     void openFile()
     {
-      //static unsigned count = 0;
-
-      if (m_path.empty()) {
-        m_tracePathFile = "./";
-      }
-      else {
-        m_tracePathFile = m_path;
-        if (*(m_tracePathFile.rbegin()) != '/')
-          m_tracePathFile.push_back('/');
-#ifdef SHAPE_PLATFORM_WINDOWS
-        _mkdir(m_tracePathFile.c_str());
-#else
-        mkdir(m_tracePathFile.c_str(), 0755);
-#endif
-      }
-      if (!m_timestamp) {
-        m_tracePathFile += m_fname;
-      }
-      else {
-        auto timePoint = std::chrono::system_clock::now();
-        auto fromMs = std::chrono::duration_cast<std::chrono::microseconds>(timePoint.time_since_epoch()).count() % 1000;
-        auto time = std::chrono::system_clock::to_time_t(timePoint);
-        auto tm = *std::localtime(&time);
-
-        char buf[80];
-        strftime(buf, sizeof(buf), "%Y-%m-%d-%H-%M-", &tm);
-        std::ostringstream os;
-        os << m_tracePathFile << buf << std::setw(3) << std::setfill('0') << fromMs << '-' << m_fname;
-        m_tracePathFile = os.str();
-      }
-
       if (!m_file.is_open() && !m_fileError)
       {
-       m_file.open(m_tracePathFile, std::ofstream::out | std::ofstream::trunc);
+        if (m_path.empty()) {
+          m_tracePathFile = "./";
+        }
+        else {
+          m_tracePathFile = m_path;
+          if (*(m_tracePathFile.rbegin()) != '/')
+            m_tracePathFile.push_back('/');
+#ifdef SHAPE_PLATFORM_WINDOWS
+          _mkdir(m_tracePathFile.c_str());
+#else
+          mkdir(m_tracePathFile.c_str(), 0755);
+#endif
+        }
+        if (!m_timestamp) {
+          m_tracePathFile += m_fname;
+        }
+        else {
+          // remove old files or keep allowed number
+          processStaleFiles(m_tracePathFile);
+
+          std::ostringstream os;
+          os << m_tracePathFile << encodeTimestamp(std::chrono::system_clock::now(), true) << '-' << m_fname;
+          m_tracePathFile = os.str();
+        }
+
+        m_file.open(m_tracePathFile, std::ofstream::out | std::ofstream::trunc);
         if (!m_file.is_open()) {
           m_fileError = true;
           std::cerr << "Cannot open: " PAR(m_tracePathFile) << std::endl;
@@ -213,7 +218,128 @@ namespace shape {
       openFile();
     }
 
+    void selectStaleFile(std::multimap< std::chrono::system_clock::time_point, std::string> & timeFileMap
+      , const std::string & fullFname
+      , const std::string & fname
+    ) const
+    {
+      size_t found = fname.find(m_fname);
+      if (std::string::npos != found) {
+        try {
+          auto ts = parseTimestamp(fname.substr(0, found), true);
+          timeFileMap.insert(std::make_pair(ts, fullFname));
+        }
+        catch (...) {
+          //cannot convert to time => unknown time format => don't care the file
+        }
+      }
+    }
 
+    // remove all files older then maxAgeMinutes or don't care if maxAgeMinutes <= 0
+    // keep only maxNumber of files or don't care if maxNumber <= 0
+    void removeStaleFile(std::multimap< std::chrono::system_clock::time_point, std::string> & timeFileMap) const
+    {
+      // keep just required num of files
+      if (m_maxNumber > 0) {
+        size_t sz = timeFileMap.size();
+        if (sz > m_maxNumber) {
+          for (size_t i = sz - m_maxNumber; i > 0; i--) {
+            auto it = timeFileMap.begin();
+            std::remove(it->second.c_str());
+            timeFileMap.erase(it);
+          }
+        }
+      }
+
+      // remove older files
+      if (m_maxAgeMinutes > 0) {
+        std::chrono::system_clock::time_point tp = std::chrono::system_clock::now();
+        tp -= std::chrono::minutes(m_maxAgeMinutes);
+
+        for (auto & it : timeFileMap) {
+          if (it.first < tp) {
+            std::remove(it.second.c_str());
+          }
+        }
+      }
+    }
+
+#ifdef SHAPE_PLATFORM_WINDOWS
+    void processStaleFiles(const std::string& dir) const
+    {
+      using namespace std;
+
+      WIN32_FIND_DATA fid;
+      HANDLE found = INVALID_HANDLE_VALUE;
+
+      std::multimap< std::chrono::system_clock::time_point, std::string> timeFileMap;
+
+      string sdirect(dir);
+      sdirect.append("/*");
+      sdirect.append(m_fname);
+
+      found = FindFirstFile(sdirect.c_str(), &fid);
+
+      if (INVALID_HANDLE_VALUE == found) {
+        THROW_EXC_TRC_WAR(std::logic_error, "Directory does not exist: " << PAR(dir));
+      }
+
+      do {
+        if (fid.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+          continue; //skip a directory
+        string fil(dir);
+        fil.append(fid.cFileName);
+
+        selectStaleFile(timeFileMap, fil, fid.cFileName);
+
+      } while (FindNextFile(found, &fid) != 0);
+
+      FindClose(found);
+
+      removeStaleFile(timeFileMap);
+
+    }
+
+#else
+    void processStaleFiles(const std::string& dirStr) const
+    {
+      using namespace std;
+
+      std::set<std::string> fileSet;
+
+      DIR *dir;
+      class dirent *ent;
+      class stat st;
+
+      dir = opendir(dirStr.c_str());
+      if (dir == nullptr) {
+        THROW_EXC_TRC_WAR(std::logic_error, "Directory does not exist: " << PAR(dirStr));
+      }
+      //TODO exeption if dir doesn't exists
+      while ((ent = readdir(dir)) != NULL) {
+        const string file_name = ent->d_name;
+        const string full_file_name(dirStr + "/" + file_name);
+
+        if (file_name[0] == '.')
+          continue;
+
+        if (stat(full_file_name.c_str(), &st) == -1)
+          continue;
+
+        const bool is_directory = (st.st_mode & S_IFDIR) != 0;
+
+        if (is_directory)
+          continue;
+
+        selectStaleFile(timeFileMap, full_file_name, file_name);
+
+      }
+      closedir(dir);
+
+      removeStaleFile(timeFileMap);
+    }
+
+#endif
   };
 
   //-------------------------------------
