@@ -223,6 +223,7 @@ namespace shape {
       , const std::string & fname
     ) const
     {
+      std::cout << std::endl << fullFname << "   " << fname;
       size_t found = fname.find(m_fname);
       if (std::string::npos != found) {
         try {
@@ -318,7 +319,7 @@ namespace shape {
       //TODO exeption if dir doesn't exists
       while ((ent = readdir(dir)) != NULL) {
         const string file_name = ent->d_name;
-        const string full_file_name(dirStr + "/" + file_name);
+        const string full_file_name(dirStr + file_name);
 
         if (file_name[0] == '.')
           continue;
