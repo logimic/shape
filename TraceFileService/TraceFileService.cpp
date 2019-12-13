@@ -242,7 +242,7 @@ namespace shape {
       // keep just required num of files
       if (m_maxNumber > 0) {
         size_t sz = timeFileMap.size();
-        if (sz > m_maxNumber) {
+        if (sz > (size_t)m_maxNumber) {
           for (size_t i = sz - m_maxNumber; i > 0; i--) {
             auto it = timeFileMap.begin();
             std::remove(it->second.c_str());
@@ -305,7 +305,7 @@ namespace shape {
     {
       using namespace std;
 
-      std::set<std::string> fileSet;
+      std::multimap< std::chrono::system_clock::time_point, std::string> timeFileMap;
 
       DIR *dir;
       class dirent *ent;
