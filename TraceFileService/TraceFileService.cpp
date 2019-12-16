@@ -276,28 +276,27 @@ namespace shape {
       std::multimap< std::chrono::system_clock::time_point, std::string> timeFileMap;
 
       string sdirect(dir);
-      sdirect.append("/*");
+      sdirect.append("*");
       sdirect.append(m_fname);
 
       found = FindFirstFile(sdirect.c_str(), &fid);
 
-      if (INVALID_HANDLE_VALUE == found) {
-        THROW_EXC_TRC_WAR(std::logic_error, "Directory does not exist: " << PAR(dir));
+      if (INVALID_HANDLE_VALUE != found) {
+
+        do {
+          if (fid.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+            continue; //skip a directory
+          string fil(dir);
+          fil.append(fid.cFileName);
+
+          selectStaleFile(timeFileMap, fil, fid.cFileName);
+
+        } while (FindNextFile(found, &fid) != 0);
+
+        FindClose(found);
+
+        removeStaleFile(timeFileMap);
       }
-
-      do {
-        if (fid.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-          continue; //skip a directory
-        string fil(dir);
-        fil.append(fid.cFileName);
-
-        selectStaleFile(timeFileMap, fil, fid.cFileName);
-
-      } while (FindNextFile(found, &fid) != 0);
-
-      FindClose(found);
-
-      removeStaleFile(timeFileMap);
 
     }
 
@@ -316,7 +315,7 @@ namespace shape {
       if (dir == nullptr) {
         THROW_EXC_TRC_WAR(std::logic_error, "Directory does not exist: " << PAR(dirStr));
       }
-      //TODO exeption if dir doesn't exists
+
       while ((ent = readdir(dir)) != NULL) {
         const string file_name = ent->d_name;
         const string full_file_name(dirStr + file_name);
