@@ -223,7 +223,6 @@ namespace shape {
       , const std::string & fname
     ) const
     {
-      std::cout << std::endl << fullFname << "   " << fname;
       size_t found = fname.find(m_fname);
       if (std::string::npos != found) {
         try {
