@@ -9,3 +9,5 @@ source_group("Source Files" FILES ${_SRCFILES})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 add_library(${PROJECT_NAME} STATIC ${_HDRFILES} ${_SRCFILES})
+
+install(TARGETS launcher DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
