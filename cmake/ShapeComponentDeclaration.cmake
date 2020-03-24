@@ -40,7 +40,7 @@ function(ConfigureShapeComponent componentName componentHeader)
 		string(REPLACE ";" ";\n" PROVIDED_INTERFACES "${SHAPE_COMPONENT_PROVIDED_IFACES_${NAMESPACE_COMPONENT}}")
 		string(REPLACE ";" ";\n" REQUIRED_INTERFACES "${SHAPE_COMPONENT_REQUIRED_IFACES_${NAMESPACE_COMPONENT}}")
 		set(TARGET_FILE "${CMAKE_CURRENT_BINARY_DIR}/${NAMESPACE_COMPONENT}.hxx")
-		configure_file(${shape_CMAKE_MODULE_PATH}/Component.hxx.in ${TARGET_FILE} @ONLY)
+		configure_file(${PROJECT_CMAKE_MODULE_PATH}/Component.hxx.in ${TARGET_FILE} @ONLY)
 		set(${componentHeader} ${TARGET_FILE} PARENT_SCOPE)
 		message(STATUS "Component ${componentName} configured to ${TARGET_FILE}")
 	else()
@@ -51,7 +51,7 @@ endfunction()
 function(DeployShapeComponent componentName)
 	INSTALL(TARGETS ${componentName}
 		RUNTIME DESTINATION "\${CMAKE_INSTALL_CONFIG_NAME}/${PROJECT_INSTALL_PREFIX}/bin"
-		LIBRARY DESTINATION "\${CMAKE_INSTALL_CONFIG_NAME}/${PROJECT_INSTALL_PREFIX}/bin"
+		LIBRARY DESTINATION "\${CMAKE_INSTALL_CONFIG_NAME}/${PROJECT_INSTALL_PREFIX}/lib"
 		ARCHIVE DESTINATION "\${CMAKE_INSTALL_CONFIG_NAME}/${PROJECT_INSTALL_PREFIX}/lib"
 	)
 
@@ -103,9 +103,9 @@ function(DeployShapeConfigurationStartUp executable cfgName)
 	set(_TMP_FILE ${CMAKE_CURRENT_BINARY_DIR}/tmp/runcfg/${cfgName}/StartUp)
 	
 	set(_EXE "${shape_DEPLOY}/Debug/${executable}")		
-	configure_file(${shape_CMAKE_MODULE_PATH}/StartUp.in ${_TMP_FILE}.Debug @ONLY)
+	configure_file(${PROJECT_CMAKE_MODULE_PATH}/StartUp.in ${_TMP_FILE}.Debug @ONLY)
 	set(_EXE "${shape_DEPLOY}/Release/${executable}")		
-	configure_file(${shape_CMAKE_MODULE_PATH}/StartUp.in ${_TMP_FILE}.Release @ONLY)
+	configure_file(${PROJECT_CMAKE_MODULE_PATH}/StartUp.in ${_TMP_FILE}.Release @ONLY)
 
 	install(
 		PROGRAMS "${_TMP_FILE}.Debug"
@@ -161,7 +161,7 @@ function(ConfigureMsvcProject executable cfgName)
 			set(DEBUG_WD "${shape_DEPLOY}/Debug/${PROJECT_INSTALL_PREFIX}/runcfg/${cfgName}")		
 			set(RELEASE_WD "${shape_DEPLOY}/Release/${PROJECT_INSTALL_PREFIX}/runcfg/${cfgName}")		
 
-			configure_file(${shape_CMAKE_MODULE_PATH}/project.vcxproj.user.in ${_vcxProjUserName} @ONLY)
+			configure_file(${PROJECT_CMAKE_MODULE_PATH}/project.vcxproj.user.in ${_vcxProjUserName} @ONLY)
         endif()
     endif()
 

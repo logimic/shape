@@ -3,7 +3,6 @@ project (shape)
 cmake_minimum_required(VERSION 3.0)
 
 set(PROJECT_CMAKE_MODULE_PATH ${PROJECT_CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
-set(${PROJECT_NAME}_CMAKE_MODULE_PATH ${PROJECT_CMAKE_MODULE_PATH})
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
 
 enable_language(CXX)
@@ -98,18 +97,6 @@ message(STATUS "CMAKE_C_FLAGS_DEBUG:     ${CMAKE_C_FLAGS_DEBUG}")
 include_directories(${CMAKE_BINARY_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
-# Configure config file.
-# This file specifies actions performed and variables exported when using find_package on this project.
-# The find_package requires properly set ${PROJECT_NAME}_DIR variable to a location where the
-# configured config file persists. This variable is usually specified from the outside of CMake.
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}Config.cmake.in ${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake @ONLY)
-
-#apply just configured file
-include(${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake)
-
-set(PROJECT_INSTALL_PREFIX ${PROJECT_NAME})
-set(CMAKE_INSTALL_PREFIX ${shape_DEPLOY})
-
 add_definitions(-DRAPIDJSON_HAS_STDSTRING)
 
 #library build
@@ -120,7 +107,13 @@ add_subdirectory(TraceFormatService)
 add_subdirectory(TraceFileService)
 add_subdirectory(ComponentTemplate)
 
-add_subdirectory(examples/Example1_Thread)
+option(ENABLE_EXAMPLES "Compile examples" OFF)
+if (ENABLE_EXAMPLES)
+	add_subdirectory(examples/Example1_Thread)
+endif()
+
+# install include files
+install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_PREFIX}/include/shape FILES_MATCHING PATTERN "*.h")
 
 if(${BUILD_TESTING})
 	#external submodules
