@@ -80,10 +80,10 @@ namespace shape {
   {
   }
 
-  void Configuration::update()
+  void Configuration::update(bool persistent)
   {
     TRC_FUNCTION_ENTER("");
-    m_cmgr->update(this);
+    m_cmgr->update(this, persistent);
     TRC_FUNCTION_LEAVE("");
   }
 
@@ -126,8 +126,9 @@ namespace shape {
 
   void Configuration::encode(const string& fname)
   {
-    if (m_properties)
+    if (m_properties) {
       m_properties->encodeFile(fname);
+    }
   }
 
   void Configuration::validate(const rapidjson::SchemaDocument& sd)

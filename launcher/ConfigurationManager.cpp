@@ -129,7 +129,7 @@ namespace shape
     return retval;
   }
 
-  void ConfigurationManager::update(Configuration* cfg)
+  void ConfigurationManager::update(Configuration* cfg, bool persistent)
   {
     TRC_FUNCTION_ENTER(PAR(cfg));
     lock_guard<mutex> lck(m_mtx);
@@ -156,6 +156,9 @@ namespace shape
         }
         else {
           TRC_WARNING("Missing JSON schema for recommended validation: " << NAME_PAR(componentName, cfg->getComponentName()));
+        }
+        if (persistent) {
+          cfg->encode(cfg->getFilename());
         }
         componentCfg.m_component->updateInstance(cfg->getId(), cfg->getProperties());
       }

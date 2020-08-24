@@ -44,7 +44,7 @@ namespace shape {
     void registerComponent(shape::Component* component);
     void unregisterComponent(shape::Component* component);
 
-    void update(Configuration* cfg);
+    void update(Configuration* cfg, bool persistent);
     void remove(Configuration* cfg);
 
   private:

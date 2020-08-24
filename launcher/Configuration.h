@@ -29,7 +29,7 @@ namespace shape {
     const std::string& getComponentName() const override;
     const std::string& getId() const override;
     std::shared_ptr<Properties> & getProperties() override;
-    void update() override;
+    void update(bool persistent = false) override;
     void remove() override;
 
     virtual ~Configuration();
