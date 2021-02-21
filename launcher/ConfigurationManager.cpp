@@ -217,7 +217,7 @@ namespace shape
     TRC_FUNCTION_ENTER("");
     using namespace rapidjson;
 
-    std::string schemasDir = m_configurationDir + "/cfgSchemas";
+    std::string schemasDir = m_schemaDir + "/cfgSchemas";
     TRC_DEBUG("Loading configuration schemas from: " << PAR(schemasDir))
     std::set<std::string> schemas;
     try {
