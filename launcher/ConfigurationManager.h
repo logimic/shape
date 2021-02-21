@@ -41,6 +41,7 @@ namespace shape {
     void loadConfigurationSchemes();
     void loadExistingConfigurations();
     void setCfgDir(const std::string & cfgDir) { m_configurationDir = cfgDir; }
+    void setSchemaDir(const std::string &schemaDir) { m_schemaDir = schemaDir; }
     void registerComponent(shape::Component* component);
     void unregisterComponent(shape::Component* component);
 
@@ -60,6 +61,7 @@ namespace shape {
 
     std::mutex m_mtx;
     std::string m_configurationDir;
+    std::string m_schemaDir;
 
     std::map<std::string, rapidjson::SchemaDocument> m_validatorMap;
 
