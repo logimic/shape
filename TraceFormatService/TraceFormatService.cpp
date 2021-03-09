@@ -68,7 +68,7 @@ namespace shape {
         fname = fname.substr(found + 1);
 
       // format msg
-      o << std::setfill('0') << std::setw(6) << buf << '.' << nowTimePointUs << ' ' <<
+      o << buf << '.' << std::setfill('0') << std::setw(6) << nowTimePointUs << ' ' <<
         TraceLevelStringConvertor::int2str(level) << ' ' << channel << ' ' <<
         moduleName << ' ' << fname << ':' << sourceLine << ' ' << funcName << "() " << std::endl << 
         msg;
