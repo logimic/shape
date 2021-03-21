@@ -132,6 +132,7 @@ add_subdirectory(startup)
 add_subdirectory(launcher)
 add_subdirectory(TraceFormatService)
 add_subdirectory(TraceFileService)
+add_subdirectory(TraceSyslogService)
 add_subdirectory(ComponentTemplate)
 
 if(${SHAPE_BUILD_EXAMPLES})
