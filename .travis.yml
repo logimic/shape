@@ -1,0 +1,15 @@
+language: cpp
+compiler:
+- clang
+- gcc
+dist: trusty
+sudo: false
+addons:
+  apt:
+    packages:
+    - libgtest-dev
+    - google-mock
+    - libssl-dev
+    - libcurl4-openssl-dev
+script:
+- bash buildMake.sh
