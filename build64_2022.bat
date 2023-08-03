@@ -1,7 +1,7 @@
 set project=shape
 
 rem //expected build dir structure
-set buildexp=build\\VS15_2022_x64
+set buildexp=build\\VS17_2022_x64
 
 set currentdir=%cd%
 set builddir=.\\%buildexp%
